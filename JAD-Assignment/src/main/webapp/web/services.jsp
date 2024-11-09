@@ -12,11 +12,7 @@
 <body>
 <%@page import ="java.sql.*, java.*"%>
 
-<%
 
-CleaningService service = new CleaningService();
-
-%>
 
 
 </body>

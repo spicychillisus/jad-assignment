@@ -1,5 +1,5 @@
 // contains member data
-package services;
+package members;
 
 
 public class Member {
@@ -21,6 +21,40 @@ public class Member {
 	public Member() {
 		// empty
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(Integer countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public Integer getPhoneNum() {
+		return phoneNum;
+	}
+
+	public void setPhoneNum(Integer phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
 	
 	
 	

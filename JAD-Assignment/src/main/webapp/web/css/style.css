@@ -24,6 +24,25 @@
     font-style: normal;
 }
 
+.montserrat-500 {
+	font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+        
+}
+
+/* custom padding since bootstrap is ass */
+.pt-6 {
+	padding-top: 6px;
+}
+
+.pt-10 {
+	padding-top: 10px;
+}
+
+/* images */
+
 .registration-page-background {
     background-image: url("../images/reg-bg.jpg");
     background-repeat: no-repeat;
