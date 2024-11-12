@@ -35,7 +35,7 @@ public class CleaningService {
 		return this.name;
 	}
 	
-	public String displayServiceCover() {
+	public String displayServiceCover(double width, double height) {
 		return this.imageUrl;
 	}
 	
@@ -55,5 +55,7 @@ public class CleaningService {
 	public String displayDescription() {
 		return this.description;
 	}
+	
+
 	
 }

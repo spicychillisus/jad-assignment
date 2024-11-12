@@ -24,6 +24,13 @@
     font-style: normal;
 }
 
+.inter-700 {
+    font-family: "Inter", serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+}
+
 .montserrat-500 {
 	font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;

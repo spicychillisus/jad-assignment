@@ -29,13 +29,13 @@ countries.add("+86");
 countries.add("+63");
 
 //placeholders
-ArrayList<Integer> countryNums = new ArrayList<Integer>(); 
+ArrayList<String> countryNums = new ArrayList<String>(); 
 // must follow the phone number format as shown by these placeholders
-countryNums.add(96666666); // singapore
-countryNums.add(0611111111); // malaysia
-countryNums.add(966666666); // myanmmar
-countryNums.add(56666666); // china
-countryNums.add(782-9992435); // philippines
+countryNums.add("9666-6666"); // singapore
+countryNums.add("0611111111"); // malaysia
+countryNums.add("966666666"); // myanmmar
+countryNums.add("56666666"); // china
+countryNums.add("782-9992435"); // philippines
 
 %>
 
@@ -50,7 +50,7 @@ countryNums.add(782-9992435); // philippines
 				<!-- form -->
 				<div class="border mt-4 rounded bg-white">
 		            <div class="mx-4 py-4">
-		                <h1 class="d-flex justify-content-center align-items-center px-5 inter-h1 mb-2 inter-500">
+		                <h1 class="d-flex justify-content-center align-items-center px-5 inter-h1 mb-2 inter-700">
 		                    Registration
 		                </h1>
 		                <span class="inter-normal d-flex justify-content-center">Sign up with us to start using our services</span>
@@ -65,15 +65,22 @@ countryNums.add(782-9992435); // philippines
                                     <select id="countryCode" class="form-control" required>
                                         <!--  <option selected>+</option> -->
                                         <%
-                                        for (int i = 0; i < countries.size(); i++) {
+                                        int i = 0;
+                                        int placeholderDisplay = 0;
+                                        for (i = 0; i < countries.size(); i++) {
+                                        	System.out.println(i);
                                         %>	
                                         	<option value="<%= i %>"><%= countries.get(i) %></option>
                                         <%
+                                        	
                                         }
                                         %>
                                     </select>
                                   </div>
                                   <div class="col-md-9">
+                                  	<%
+                                  	System.out.println(placeholderDisplay);
+                                  	%>
                                   	<input type="number" class="form-control" id="phoneNum" placeholder="1111" required>
                                   </div>
                                 </div>
@@ -91,7 +98,7 @@ countryNums.add(782-9992435); // philippines
 		                        <span class="fa-solid toggle-btn fa-eye" id="eyebox" onclick="togglePassword()"></span>                        
 		                    </div>
 		                    <div class="d-flex justify-content-center">
-		                        <button type="submit" class="btn btn-dark mt-3 inter-500" onclick="login()">Login</button>
+		                        <button type="submit" class="btn btn-dark mt-3 inter-500" onclick="login()">Register</button>
 		                    </div>
 		                </form>
 		            </div>
