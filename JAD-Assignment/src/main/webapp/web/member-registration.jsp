@@ -8,7 +8,7 @@
 </head>
 <body>
 <%@ include file = "components/navbar.html" %>
-<%@page import ="java.sql.*, java.*, java.util.*"%>
+<%@page import ="java.sql.*, java.*, java.util.*, members.*, pg.*"%>
 <%
 
 
@@ -36,9 +36,37 @@ countryNums.add("966666666"); // myanmmar
 countryNums.add("56666666"); // china
 countryNums.add("782-9992435"); // philippines
 
+Config neon = new Config();
+
+String url = neon.getConnectionUrl();
+String username = neon.getUser();
+String password = neon.getPassword();
+String sql = "";
+
 try {
+	Class.forName("org.postgresql.Driver");
 	
-	String url = "jdbc:postgresql://ep-yellow-sunset-a5h4poax.us-east-2.aws.neon.tech:5432/neondb";
+	Connection conn = DriverManager.getConnection(url, username, password);
+	Statement stmt = conn.createStatement();
+	
+	System.out.println("Connection to NeonDB successful!"); // success message
+	
+	sql = "INSERT INTO";
+	
+    ResultSet rs = stmt.executeQuery(sql);
+
+	
+	// Process the results
+    while (rs.next()) {
+        // Replace "column1" and "column2" with actual column names
+        System.out.println("Column1: " + rs.getString("column1"));
+        System.out.println("Column2: " + rs.getInt("column2"));
+    }
+
+    // Close the ResultSet
+    rs.close();
+
+
 } catch (Exception e) {
 	
 }
