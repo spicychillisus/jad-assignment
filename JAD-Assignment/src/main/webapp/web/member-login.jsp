@@ -8,11 +8,12 @@
 </head>
 <body>
 <%@ include file = "components/navbar.html" %>
-<%@page import ="java.sql.*, java.*"%>
+<%@page import ="java.sql.*, java.*, java.util.*, members.*"%>
 <%
 
 String sloganText = "";
 sloganText = "Your Clean Home, Our Passion!";
+System.out.println(sloganText);
 
 // displays randomly upon the page opening
 // a ? will be added at the end by default

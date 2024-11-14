@@ -8,12 +8,17 @@
 </head>
 <body>
 	<%@ include file = "components/navbar.html" %>
+	<%@ page import = "services.*" %>
     <!-- Header Section -->
     <header>
         <h1>Welcome to CleanEase</h1>
         <p>Your trusted partner for home cleaning services</p>
     </header>
-
+	<%
+	
+	CleaningService service = new CleaningService();
+	
+	%>
 
     <!-- Main Content Section -->
     <main>
