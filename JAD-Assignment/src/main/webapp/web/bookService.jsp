@@ -14,7 +14,7 @@
 
 <div class="container mt-5">
     <h1>Book a Cleaning Service</h1>
-    <p>Fill out the form below to book a service.</p>
+    <p>Fill out the form below to book a service</p>
 
     <!-- Booking Form -->
     <form action="bookService.jsp" method="post" class="mt-3">

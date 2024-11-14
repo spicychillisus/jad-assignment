@@ -11,8 +11,8 @@
 <%@page import ="java.sql.*, java.*, java.util.*"%>
 <%
 
+
 String sloganText = "";
-sloganText = "im feeling romantical";
 
 // displays randomly upon the page opening
 // a ? will be added at the end by default
@@ -36,14 +36,27 @@ countryNums.add("966666666"); // myanmmar
 countryNums.add("56666666"); // china
 countryNums.add("782-9992435"); // philippines
 
+try {
+	
+	String url = "jdbc:postgresql://ep-yellow-sunset-a5h4poax.us-east-2.aws.neon.tech:5432/neondb";
+} catch (Exception e) {
+	
+}
 %>
 
 <div class="registration-page-background"> <!-- this is the background -->
 	<div class="container pt-10">
 		<div class="row">
 			<div class="col">
-				<h2><%= sloganText %>?</h2>
-				<span>Engage with us now!</span>
+			<%
+			for (int k = 0; k < slogans.length; k++) {
+				Random random = new Random();
+				
+				sloganText = slogans[random.nextInt(slogans.length)];
+			}
+			%>
+				<h2 class="montserrat-700"><%= sloganText %>?</h2>
+				<span class="inter-500">Engage with us now!</span>
 			</div>
 			<div class="col-4">
 				<!-- form -->
