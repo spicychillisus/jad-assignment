@@ -11,6 +11,7 @@
 <body>
 
 <%@ include file="components/navbar.html" %>
+<%@ page import ="pg.*" %>
 
 <div class="container mt-5">
     <h1>Book a Cleaning Service</h1>
@@ -53,10 +54,12 @@
 
     <!-- Confirmation message -->
     <%
+    	Config neon = new Config();
         // Database connection details
-        String dbURL = "jdbc:mysql://localhost:3306/yourDatabaseName";
-        String dbUser = "yourUsername";
-        String dbPassword = "yourPassword";
+        //String dbURL = "jdbc:mysql://localhost:3306/yourDatabaseName";
+        String dbURL = neon.getConnectionUrl();
+        String dbUser = neon.getUser();
+        String dbPassword = neon.getPassword();
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String serviceType = request.getParameter("serviceType");
