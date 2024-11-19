@@ -78,27 +78,6 @@ main {
     line-height: 1.5;
 }
 
-footer {
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-}
-
-footer a {
-    color: #4CAF50;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-footer p {
-    font-size: 1rem;
-    margin: 10px 0;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

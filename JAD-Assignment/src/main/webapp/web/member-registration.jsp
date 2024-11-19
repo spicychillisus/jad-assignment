@@ -25,7 +25,7 @@
     </script>
 </head>
 <body>
-<%@ include file="components/navbar.html" %>
+<%@ include file="components/navbar.html" %> <!-- Navbar Component -->
 <%@ page import="java.sql.*, java.util.ArrayList, java.util.Random, java.util.regex.*, members.*, pg.*" %>
 
 <%
@@ -88,8 +88,10 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
 
                 int rowsInserted = pstmt.executeUpdate();
                 if (rowsInserted > 0) {
-                    // Store user email in session
+                    // Store user email and name in session
                     session.setAttribute("userEmail", email);
+                    session.setAttribute("userName", name); // Store user's name
+
                     message = "<div class='success-message'>Registration successful! Welcome, " + name + ".</div>";
                     
                     // Redirect to index.jsp after successful registration
@@ -174,5 +176,6 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
         </div>
     </div>
 </div>
+    <%@ include file="components/footer.html" %>
 </body>
 </html>

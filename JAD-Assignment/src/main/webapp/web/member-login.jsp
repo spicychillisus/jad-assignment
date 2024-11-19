@@ -12,7 +12,10 @@
 <%@ page import ="java.sql.*, java.*, java.util.*, members.*, pg.*"%>
 
 <%
-String sloganText = "Your Clean Home, Our Passion!";
+String sloganText = "";
+String[] slogans = {"Feeling Dirty", "Messy Situation"};
+Random random = new Random();
+sloganText = slogans[random.nextInt(slogans.length)];
 String message = ""; // Message to display on successful login or error
 
 // Database connection details (same as registration page)
@@ -116,6 +119,6 @@ function togglePassword() {
     }
 }
 </script>
-
+    <%@ include file="components/footer.html" %>
 </body>
 </html>

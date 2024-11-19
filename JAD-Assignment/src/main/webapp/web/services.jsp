@@ -112,5 +112,6 @@
         <a href="bookService.jsp?service=upholsteryCleaning" class="book-button">Book Now</a>
     </div>
 </div>
+    <%@ include file="components/footer.html" %>
 </body>
 </html>

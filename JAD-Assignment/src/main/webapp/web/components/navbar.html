@@ -44,21 +44,21 @@
         </div>
         <div class="col text-center inter-500">
           <a href="services.jsp" class="nav-link d-inline me-4">Services</a>
-          <a href="#" class="nav-link d-inline">Contact Us</a>
+          <a href="contact-us.jsp" class="nav-link d-inline">Contact Us</a>
         </div>
         <div class="col text-end inter-500">
 	<% 
-	    String userName = (String) session.getAttribute("userName");
-	    if (userName != null) { 
+	    if (session.getAttribute("userName") != null) {
+	        String userName = (String) session.getAttribute("userName");
 	%>
-	    <span class="text-light"><%= userName %> | </span>
-	    <a href="logout.jsp" class="text-decoration-none text-light login">Logout</a>
-	<% 
-	    } else { 
+	        <span class="text-light"><%= userName %> | </span>
+	        <a href="logout.jsp" class="text-decoration-none text-light login">Logout</a>
+	<%
+	    } else {
 	%>
-	    <span><a href="member-login.jsp" class="text-decoration-none text-light login">Login</a></span> / 
-	    <span><a href="member-registration.jsp" class="text-decoration-none text-light login">Sign Up</a></span>
-	<% 
+	        <span><a href="member-login.jsp" class="text-decoration-none text-light login">Login</a></span> / 
+	        <span><a href="member-registration.jsp" class="text-decoration-none text-light login">Sign Up</a></span>
+	<%
 	    }
 	%>
 
