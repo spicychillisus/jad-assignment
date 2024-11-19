@@ -71,9 +71,9 @@ if (email != null && passwordInput != null) {
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2><%= sloganText %></h2>
-                <!-- Display error message if login fails -->
                 <%= message %>
+                <h2 class="montserrat-700"><%= sloganText %>?</h2>
+                <span class="inter-500">Engage with us now!</span>
             </div>
             <div class="col-4">
                 <!-- Login Form -->

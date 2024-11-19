@@ -1,12 +1,4 @@
 
-    /* Apply background color to the entire page */
-	html, body {
-	    height: 100%; /* Ensure the entire page takes up 100% height */
-	    margin: 0;
-	    padding: 0;
-	    background-color: #e6f7e6; /* Light Green */
-	}
-	
 	.content-container {
 	    flex-grow: 1; /* Allow content to fill available space */
 	    display: flex;

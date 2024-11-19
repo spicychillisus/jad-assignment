@@ -25,7 +25,7 @@
     </script>
 </head>
 <body>
-<%@ include file="components/navbar.html" %> <!-- Navbar Component -->
+<%@ include file="components/navbar.html" %>
 <%@ page import="java.sql.*, java.util.ArrayList, java.util.Random, java.util.regex.*, members.*, pg.*" %>
 
 <%
