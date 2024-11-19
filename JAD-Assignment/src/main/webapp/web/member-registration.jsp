@@ -5,10 +5,28 @@
     <meta charset="UTF-8">
     <title>Member Registration</title>
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        // Function to validate the form before submission
+        function validateForm() {
+            // Clear any previous error messages
+            const errorContainer = document.getElementById("passwordError");
+            errorContainer.innerHTML = ""; // Clear the error message
+
+            const password = document.forms["registrationForm"]["password"].value;
+            const confirmPassword = document.forms["registrationForm"]["confirmPassword"].value;
+
+            if (password !== confirmPassword) {
+                errorContainer.innerHTML = "<div class='error-message'>Password and Confirm Password do not match.</div>";
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
 </head>
 <body>
 <%@ include file="components/navbar.html" %>
-<%@ page import="java.sql.*, java.util.ArrayList, java.util.Random, members.*, pg.*" %>
+<%@ page import="java.sql.*, java.util.ArrayList, java.util.Random, java.util.regex.*, members.*, pg.*" %>
 
 <%
 String sloganText = "";
@@ -38,26 +56,61 @@ String passwordInput = request.getParameter("password");
 
 if (name != null && countryCode != null && phoneNum != null && email != null && passwordInput != null) {
     try {
-        Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection(url, username, password);
+        // Validate username for special characters
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9 ]+$");
+        Matcher matcher = pattern.matcher(name);
+        if (!matcher.matches()) {
+            message = "<div class='error-message'>Invalid username: Special characters are not allowed.</div>";
+        } else {
+            // Proceed with database operations
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DriverManager.getConnection(url, username, password);
 
-        String sql = "INSERT INTO users (name, country_code, phone_number, email, password) VALUES (?, ?, ?, ?, ?)";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, name);
-        pstmt.setString(2, countryCode);
-        pstmt.setString(3, phoneNum);
-        pstmt.setString(4, email);
-        pstmt.setString(5, passwordInput); // Consider hashing this before saving
+            // Check if the phone number is already registered
+            String checkPhoneSql = "SELECT COUNT(*) FROM users WHERE phone_number = ?";
+            PreparedStatement checkPhoneStmt = conn.prepareStatement(checkPhoneSql);
+            checkPhoneStmt.setString(1, phoneNum);
+            ResultSet rs = checkPhoneStmt.executeQuery();
+            rs.next();
+            int phoneCount = rs.getInt(1);
 
-        int rowsInserted = pstmt.executeUpdate();
-        if (rowsInserted > 0) {
-            message = "<div class='success-message'>Registration successful! Welcome, " + name + ".</div>";
+            if (phoneCount > 0) {
+                message = "<div class='error-message'>The phone number <strong>" + phoneNum + "</strong> is already associated with another account. Please use a different phone number.</div>";
+            } else {
+                // Insert new user
+                String sql = "INSERT INTO users (name, country_code, phone_number, email, password) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, name);
+                pstmt.setString(2, countryCode);
+                pstmt.setString(3, phoneNum);
+                pstmt.setString(4, email);
+                pstmt.setString(5, passwordInput); // Consider hashing this before saving
+
+                int rowsInserted = pstmt.executeUpdate();
+                if (rowsInserted > 0) {
+                    // Store user email in session
+                    session.setAttribute("userEmail", email);
+                    message = "<div class='success-message'>Registration successful! Welcome, " + name + ".</div>";
+                    
+                    // Redirect to index.jsp after successful registration
+                    response.sendRedirect("index.jsp");
+                    return;
+                }
+            }
+            conn.close();
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
 
-        conn.close();
+        // Check for unique constraint violations (e.g., email uniqueness)
+        if ("23505".equals(e.getSQLState())) {
+            message = "<div class='error-message'>The email address <strong>" + email + "</strong> is already registered. Please use a different email or log in.</div>";
+        } else {
+            message = "<div class='error-message'>An unexpected error occurred during registration. Please try again later.</div>";
+        }
     } catch (Exception e) {
         e.printStackTrace();
-        message = "<div class='error-message'>Error during registration: " + e.getMessage() + "</div>";
+        message = "<div class='error-message'>An unexpected error occurred. Please try again later.</div>";
     }
 }
 %>
@@ -80,7 +133,7 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
                         <span class="inter-normal d-flex justify-content-center">
                             Sign up with us to start using our services
                         </span>
-                        <form class="inter-normal mt-3" method="post" action="">
+                        <form name="registrationForm" class="inter-normal mt-3" method="post" action="" onsubmit="return validateForm()">
                             <div class="form-group inter-normal mb-3">
                                 <input type="text" class="form-control" name="name" placeholder="Name" required>
                             </div>
@@ -107,6 +160,10 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
                             <div class="form-group position-relative mt-3">
                                 <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" required>
                             </div>
+                            
+                            <!-- Password Mismatch Error Message -->
+                            <div id="passwordError" class="mb-3"></div>
+
                             <div class="d-flex justify-content-center">
                                 <button type="submit" class="btn btn-dark mt-3 inter-500">Register</button>
                             </div>

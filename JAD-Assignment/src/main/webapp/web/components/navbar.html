@@ -15,7 +15,7 @@
         font-optical-sizing: auto;
         font-weight: 500;
         font-style: normal;
-      }
+    }
 
     .inter-600 {
         font-family: "Inter", serif;
@@ -24,16 +24,16 @@
         font-style: normal;
     }
 
-      .montserrat-500 {
+    .montserrat-500 {
         font-family: "Montserrat", sans-serif;
         font-optical-sizing: auto;
         font-weight: 500;
         font-style: normal;
-      }
-      
-      .login:hover {
-      	text-decoration: underline;
-      }
+    }
+
+    .login:hover {
+        text-decoration: underline;
+    }
 </style>
 <body>
   <nav class="navbar navbar-secondary bg-secondary text-light">
@@ -47,7 +47,21 @@
           <a href="#" class="nav-link d-inline">Contact Us</a>
         </div>
         <div class="col text-end inter-500">
-          <span><a href="member-login.jsp" class="text-decoration-none text-light login">Login</a></span> / <span><a href="member-registration.jsp" class="text-decoration-none text-light login">Sign Up</a></span>
+	<% 
+	    String userName = (String) session.getAttribute("userName");
+	    if (userName != null) { 
+	%>
+	    <span class="text-light"><%= userName %> | </span>
+	    <a href="logout.jsp" class="text-decoration-none text-light login">Logout</a>
+	<% 
+	    } else { 
+	%>
+	    <span><a href="member-login.jsp" class="text-decoration-none text-light login">Login</a></span> / 
+	    <span><a href="member-registration.jsp" class="text-decoration-none text-light login">Sign Up</a></span>
+	<% 
+	    }
+	%>
+
         </div>
       </div>
     </div>

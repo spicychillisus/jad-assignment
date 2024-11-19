@@ -4,21 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Welcome to CleanEase</title>
-    <link rel="stylesheet" href="./css/home.css"> 
+    <link rel="stylesheet" href="./css/home.css">
 </head>
 <body>
-	<%@ include file = "components/navbar.html" %>
-	<%@ page import = "services.*" %>
+    <%@ include file="components/navbar.html" %>
+
     <!-- Header Section -->
     <header>
         <h1>Welcome to CleanEase</h1>
         <p>Your trusted partner for home cleaning services</p>
+        <%
+            String userEmail = (String) session.getAttribute("userEmail");
+            if (userEmail != null) {
+        %>
+            <p>Hello, <%= userEmail %>! Thank you for logging in.</p>
+        <% } else { %>
+            <p>Welcome, guest! Feel free to explore our services.</p>
+        <% } %>
     </header>
-	<%
-	
-	CleaningService service = new CleaningService();
-	
-	%>
 
     <!-- Main Content Section -->
     <main>
@@ -39,6 +42,7 @@
             </div>
         </section>
     </main>
-	<%@ include file="components/footer.html" %>
+
+    <%@ include file="components/footer.html" %>
 </body>
 </html>
