@@ -39,11 +39,6 @@
             </div>
         </section>
     </main>
-
-    <!-- Footer Section -->
-    <footer>
-        <p>&copy; 2024 CleanEase Inc. All rights reserved.</p>
-        <p><a href="contact.jsp">Contact Us</a> | <a href="feedback.jsp">Customer Feedback</a></p>
-    </footer>
+	<%@ include file="components/footer.html" %>
 </body>
 </html>

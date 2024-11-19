@@ -1,0 +1,41 @@
+/* footer.css */
+footer {
+    background-color: #343a40; /* Dark background for footer */
+    color: white; /* Text color */
+    text-align: center; /* Center text and links */
+    padding: 20px; /* Padding around the footer */
+    margin-top: 40px; /* Spacing above the footer */
+    font-family: 'Arial', sans-serif; /* Consistent font */
+}
+
+footer p {
+    font-size: 1rem; /* Standard font size */
+    margin: 10px 0; /* Spacing for the paragraph */
+}
+
+.footer-links {
+    display: inline-block; /* Keep links inline and centered */
+    margin-top: 10px; /* Space above links */
+}
+
+.footer-links a {
+    color: #4CAF50; /* Green color for links */
+    text-decoration: none; /* Remove underline by default */
+    font-size: 1.1rem; /* Slightly larger font size */
+    font-weight: 500; /* Medium weight */
+    margin: 0 5px; /* Space between links */
+}
+
+.footer-links a:last-child + .separator {
+    display: none; /* Hide the separator after the last link */
+}
+
+.footer-links a:hover {
+    text-decoration: underline; /* Add underline on hover */
+}
+
+.separator {
+    color: #ffffff; /* Separator color (white) */
+    margin: 0 5px; /* Space around the separator */
+    font-size: 1.2rem; /* Slightly larger separator size */
+}
