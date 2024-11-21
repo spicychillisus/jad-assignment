@@ -1,97 +1,130 @@
+/* Global styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f9f4; /* Light green background */
+    color: #333; /* Dark text color for readability */
+    margin: 0;
+    padding: 0;
+}
 
-	.content-container {
-	    flex-grow: 1; /* Allow content to fill available space */
-	    display: flex;
-	    flex-direction: column;
-	    justify-content: flex-start;
-	    padding: 20px;
-	    text-align: center;
-	}
+/* Navbar and footer styles */
+nav {
+    background-color: #2d6a4f; /* Dark green for navbar */
+}
 
-    .content-container p {
-        line-height: 1.6;
-        font-size: 1.2rem;
-        color: #555;
-        margin-bottom: 20px;
-    }
+footer {
+    background-color: #2d6a4f; /* Matching footer */
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+}
 
-    /* Service cards */
-    .service-card {
-        background: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+/* Main container */
+.content-container {
+    padding: 20px;
+    text-align: center;
+}
 
-    .service-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
+h1 {
+    font-size: 2.5em;
+    color: #1b5e20; /* Darker green for headings */
+    margin-bottom: 20px;
+}
 
-    /* Icons */
-    .service-card i {
-        font-size: 3rem;
-        color: #007bff;
-        margin-bottom: 10px;
-    }
+p.text-center {
+    font-size: 1.2em;
+    color: #4c8c4a; /* Soft green color for descriptive text */
+    margin-bottom: 30px;
+}
 
-    .service-title {
-        font-size: 1.8rem;
-        color: #333;
-        margin: 10px 0;
-    }
+/* Service card container - Adjusted to stack vertically */
+.service-card-container {
+    display: flex;
+    flex-direction: column; /* Stack top to bottom */
+    align-items: center;
+    gap: 30px; /* Increased gap between cards */
+    padding: 20px;
+}
 
-    .service-description {
-        color: #666;
-        font-size: 1rem;
-        margin: 10px 0 15px;
-    }
+/* Individual service card styles */
+.service-card {
+    background-color: #ffffff; /* White background for contrast */
+    border: 2px solid #a8d5ba; /* Light green border */
+    border-radius: 10px;
+    padding: 20px;
+    width: 380px; /* Increased width for bigger cards */
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    .price {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #28a745;
-        margin-bottom: 15px;
-    }
+.service-card:hover {
+    transform: translateY(-10px); /* Slight lift effect on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
 
-    /* Book button */
-    .book-button {
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 1rem;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 4px;
-        text-decoration: none;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
+/* Service icons */
+.service-card i {
+    font-size: 3.5em;
+    margin-bottom: 15px;
+    color: white; /* Default white color for icons */
+    padding: 20px;
+    border-radius: 50%;
+    background-color: #2d6a4f; /* Default icon background color */
+}
 
-    .book-button:hover {
-        background-color: #0056b3;
-        transform: translateY(-3px);
-    }
+/* Service titles */
+.service-card h2 {
+    font-size: 1.5em;
+    color: #1b5e20;
+    margin-bottom: 10px;
+}
 
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .service-card {
-            margin: 20px 5px;
-            padding: 15px;
-        }
+/* Service description */
+.service-card p {
+    font-size: 1em;
+    color: #4c8c4a;
+    margin-bottom: 20px;
+}
 
-        h1 {
-            font-size: 2rem;
-        }
+/* Pricing */
+.service-card .price {
+    font-size: 1.3em;
+    color: #2d6a4f;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
 
-        .service-title {
-            font-size: 1.5rem;
-        }
+/* Book Now button */
+.service-card .book-button {
+    text-decoration: none;
+    background-color: #2d6a4f;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
 
-        .price {
-            font-size: 1rem;
-        }
-    }
+.service-card .book-button:hover {
+    background-color: #1b5e20; /* Darker green for hover effect */
+}
+
+/* Specific icon and background colors for each service */
+.service-card.homeCleaning i {
+    background-color: #388e3c; /* Green for home cleaning */
+}
+
+.service-card.officeCleaning i {
+    background-color: #1976d2; /* Blue for office cleaning */
+}
+
+.service-card.toiletCleaning i {
+    background-color: #f44336; /* Red for toilet cleaning */
+}
+
+.service-card.upholsteryCleaning i {
+    background-color: #8e24aa; /* Purple for upholstery cleaning */
+}
+

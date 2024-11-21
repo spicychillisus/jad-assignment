@@ -1,33 +1,18 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Contact Us</title>
+    <link rel="stylesheet" href="./css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <style>
-        .star-rating {
-            font-size: 1.5rem;
-            direction: rtl;
-            unicode-bidi: bidi-override;
-            display: inline-block;
-        }
-        .star-rating input {
-            display: none;
-        }
-        .star-rating label {
-            color: #ccc;
-            cursor: pointer;
-        }
-        .star-rating input:checked ~ label,
-        .star-rating label:hover,
-        .star-rating label:hover ~ label {
-            color: #f5c518;
-        }
-    </style>
+    <%@ page import ="java.sql.*, java.*, java.util.*, members.*, pg.*"%>
+    
 </head>
 <body>
-<%@ include file = "components/navbar.html" %>
-<%@page import="java.sql.*, java.util.*" %>
+<%@ include file="components/navbar.html" %>
+<%@page import="java.sql.*, java.util.*, javax.sql.*, java.io.*" %>
 
 <div class="container mt-5">
     <h1 class="text-center">Contact Us</h1>
@@ -47,17 +32,57 @@
             <%
                 String userName = (String) session.getAttribute("userName");
                 String userEmail = (String) session.getAttribute("userEmail");
+                String message = "";  // For error/success messages
+                if (request.getMethod().equalsIgnoreCase("POST")) {
+                    try {
+                        String name = request.getParameter("name");
+                        String email = request.getParameter("email");
+                        String subject = request.getParameter("subject");
+                        String feedbackMessage = request.getParameter("message");
+                        int rating = Integer.parseInt(request.getParameter("rating"));
+
+                        // Database connection details (use your connection URL, username, password)
+                        Config neon = new Config();
+                        String url = neon.getConnectionUrl();
+                        String dbUser = neon.getUser();
+                        String dbPassword = neon.getPassword();
+
+                        Class.forName("org.postgresql.Driver");
+                        Connection conn = DriverManager.getConnection(url, dbUser, dbPassword);
+
+                        // SQL query to insert feedback
+                        String sql = "INSERT INTO feedback (name, email, subject, message, rating) VALUES (?, ?, ?, ?, ?)";
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, name);
+                        pstmt.setString(2, email);
+                        pstmt.setString(3, subject);
+                        pstmt.setString(4, feedbackMessage);
+                        pstmt.setInt(5, rating);
+
+                        // Execute the query
+                        int result = pstmt.executeUpdate();
+                        if (result > 0) {
+                            message = "<div class='alert alert-success'>Thank you for your feedback!</div>";
+                        } else {
+                            message = "<div class='alert alert-danger'>Sorry, there was an issue submitting your feedback. Please try again later.</div>";
+                        }
+
+                        conn.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        message = "<div class='alert alert-danger'>Error: " + e.getMessage() + "</div>";
+                    }
+                }
             %>
-            <form id="contactForm">
+            <%= message %>
+            <form id="contactForm" method="POST">
                 <div class="mb-3">
                     <label for="name" class="form-label">Your Name</label>
-                    <input type="text" class="form-control" id="name" name="name" 
-                           value="<%= userName != null ? userName : "" %>" required>
+                    <input type="text" class="form-control" id="name" name="name" value="<%= userName != null ? userName : "" %>" required>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Your Email</label>
-                    <input type="email" class="form-control" id="email" name="email" 
-                           value="<%= userEmail != null ? userEmail : "" %>" required>
+                    <input type="email" class="form-control" id="email" name="email" value="<%= userEmail != null ? userEmail : "" %>" required>
                 </div>
                 <div class="mb-3">
                     <label for="subject" class="form-label">Subject</label>
@@ -94,25 +119,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    // Handle form submission
-    document.getElementById('contactForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        // Simulate form submission success
-        const success = true; // Set to false to simulate error
-
-        if (success) {
-            document.getElementById('successMessage').classList.remove('d-none');
-            document.getElementById('errorMessage').classList.add('d-none');
-            // Optionally, clear the form fields after successful submission
-            document.getElementById('contactForm').reset();
-        } else {
-            document.getElementById('errorMessage').classList.remove('d-none');
-            document.getElementById('successMessage').classList.add('d-none');
-        }
-    });
-</script>
-    <%@ include file="components/footer.html" %>
+<%@ include file="components/footer.html" %>
 </body>
 </html>
