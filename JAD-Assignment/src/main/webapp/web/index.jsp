@@ -63,7 +63,11 @@
         <section id="cta">
             <h2>Ready to Book Your Cleaning Service?</h2>
             <p>Experience the CleanEase difference today!</p>
-            <a href="services.jsp">Explore Services</a>
+            <a href="services.jsp">
+            	<button class="btn btn-primary">
+            		Explore Services
+            	</button>
+            </a>
         </section>
         
         

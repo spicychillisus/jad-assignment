@@ -7,13 +7,13 @@
 <title>Insert title here</title>
 </head>
 <body>
-<%@ include file="components/admin-navbar.html" %>
+<%@ include file="../components/admin-navbar.html" %>
 <%@ page import="java.sql.*, java.util.*, admin.*, pg.*, services.*" %>
 
 <%
     // Ensure the user is an admin
     if (session.getAttribute("adminRole") == null || !session.getAttribute("adminRole").equals("Admin")) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("../login.jsp");
         return; // Stop further processing if not logged in as admin
     }
 %>
@@ -36,5 +36,6 @@
         <button type="submit" class="btn btn-primary">Add Service</button>
     </form>
 </div>
+<%@ include file="../components/footer.html" %>
 </body>
 </html>

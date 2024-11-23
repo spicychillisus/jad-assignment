@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.*, pg.*, services.*" %>
 <!DOCTYPE html>
 <html>
@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 <body>
-<%@ include file="components/navbar.html" %>
+<%@ include file="../components/navbar.html" %>
 
 <%
     // Ensure the user is an admin
     if (session.getAttribute("adminRole") == null || !session.getAttribute("adminRole").equals("Admin")) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("../login.jsp");
         return;
     }
 
@@ -48,6 +48,6 @@
     }
 %>
 
-<%@ include file="components/footer.html" %>
+<%@ include file="../components/footer.html" %>
 </body>
 </html>

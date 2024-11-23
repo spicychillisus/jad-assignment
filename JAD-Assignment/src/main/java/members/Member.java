@@ -9,8 +9,9 @@ public class Member {
 	private Integer phoneNum;
 	private String email;
 	private String passwordHash; // cannot save as a text, i will find the inbuilt package for it later
+	private String date;
 	
-	public Member(String name, Integer countryCode, Integer phoneNum, String email, String passwordHash) {
+	public Member(String name, Integer countryCode, Integer phoneNum, String email, String passwordHash, String date) {
 		this.name = name;
 		this.countryCode = countryCode;
 		this.phoneNum = phoneNum;
