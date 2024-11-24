@@ -12,7 +12,7 @@
 <%@ include file="components/navbar.html" %>
 <%@ page import="java.sql.*, java.util.*, pg.*, services.*" %>
 
- <%
+<%
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -20,7 +20,7 @@
     try {
         Config neon = new Config();
         String url = neon.getConnectionUrl();     
-        String username = neon.getUser();       
+        String username = neon.getUser();       	
         String password = neon.getPassword();    
 
         Class.forName("org.postgresql.Driver");
@@ -39,7 +39,7 @@
         <div class="service-card-container">
         
             <%
-                // Step 4: Loop through the result set and display each service dynamically
+                // Loop through the result set and display each service dynamically
                 while (rs.next()) {
                     String serviceTitle = rs.getString("servicetitle");
                     String serviceDescription = rs.getString("servicedescription");
@@ -49,18 +49,34 @@
 
                     // Dynamically assign icons based on service type
                     if (serviceTitle.contains("Home")) {
-                        iconClass = "fas fa-home";
+                        iconClass = "fas fa-home"; // Home service icon
                     } else if (serviceTitle.contains("Office")) {
-                        iconClass = "fas fa-building";
+                        iconClass = "fas fa-building"; // Office service icon
                     } else if (serviceTitle.contains("Toilet")) {
-                        iconClass = "fas fa-toilet";
+                        iconClass = "fas fa-toilet"; // Toilet service icon
                     } else if (serviceTitle.contains("Upholstery")) {
-                        iconClass = "fas fa-couch";
+                        iconClass = "fas fa-couch"; // Upholstery service icon
+                    } else if (serviceTitle.contains("Kitchen")) {
+                        iconClass = "fas fa-utensils"; // Kitchen icon
+                    } else if (serviceTitle.contains("Window")) {
+                        iconClass = "fas fa-window-maximize"; // Window icon
+                    } else if (serviceTitle.contains("Conference")) {
+                        iconClass = "fas fa-chalkboard"; // Conference Room icon
+                    } else if (serviceTitle.contains("Post-Renovation")) {
+                        iconClass = "fas fa-hammer"; // Hammer icon
+                    } else if (serviceTitle.contains("Move-In")) {
+                        iconClass = "fas fa-truck-moving"; // Moving Truck icon
+                    }
+                    // No icon if no match is found
+                    else {
+                        iconClass = "";
                     }
             %>
 
             <div class="service-card <%= serviceId %>">
-                <i class="<%= iconClass %>"></i> <!-- Dynamically set the icon -->
+                <% if (!iconClass.isEmpty()) { %>
+                    <i class="<%= iconClass %>"></i> <!-- Dynamically set the icon -->
+                <% } %>
                 <h2><%= serviceTitle %></h2>
                 <p><%= serviceDescription %></p>
                 <p class="price">$<%= price %></p>

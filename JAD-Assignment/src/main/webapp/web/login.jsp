@@ -39,7 +39,7 @@ if (email != null && passwordInput != null) {
 			session.setAttribute("adminRole", "Admin");
             session.setAttribute("userEmail", email);
             session.setAttribute("userName", "Admin");
-            response.sendRedirect("admin/adminDashboard.jsp");  // Redirect to admin dashboard
+            response.sendRedirect(request.getContextPath() + "/web/admin/adminDashboard.jsp");
         } else {
             // SQL query to find a member with the given email
             String sql = "SELECT * FROM users WHERE email = ?";
