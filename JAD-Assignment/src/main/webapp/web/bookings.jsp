@@ -32,7 +32,8 @@
             Class.forName("org.postgresql.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
 
-            String sql = "SELECT id, service_type, customer_name, email, phone, date, time FROM bookings WHERE email = ?";
+            // Modify the query to include the 'status' field and handle nulls by setting default 'Pending'
+            String sql = "SELECT id, service_type, customer_name, email, phone, date, time, COALESCE(status, 'Pending') AS status FROM bookings WHERE email = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, userEmail);
             ResultSet resultSet = statement.executeQuery();
@@ -48,6 +49,7 @@
                 <th>Phone</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -55,6 +57,7 @@
     <%
                 do {
                     int bookingId = resultSet.getInt("id");
+                    String status = resultSet.getString("status"); // Status will be "Pending" if null
     %>
             <tr>
                 <td><%= resultSet.getString("service_type") %></td>
@@ -63,6 +66,9 @@
                 <td><%= resultSet.getString("phone") %></td>
                 <td><%= resultSet.getDate("date") %></td>
                 <td><%= resultSet.getTime("time") %></td>
+                <td>
+                    <%= status %>  <!-- Display the current status (or 'Pending' if null) -->
+                </td>
                 <td>
                     <a href="updateBooking.jsp?id=<%= bookingId %>" class="btn btn-warning btn-sm">Update</a>
                     <a href="cancelBooking.jsp?id=<%= bookingId %>" class="btn btn-danger btn-sm">Cancel</a>
