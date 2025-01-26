@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*, java.*, pg.*" %>
+<%@ page import="java.sql.*, pg.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,9 +15,24 @@
     // Check if the user is logged in
     if (session.getAttribute("userName") == null) {
         // Redirect to login page if not logged in
-        response.sendRedirect("member-login.jsp");
-        return; // Stop further processing
+        response.sendRedirect("login.jsp");
+        return; 
     }
+
+    // Get the price from the request or set a default if not provided
+    String priceStr = request.getParameter("price");
+    double price = 0.0;
+    if (priceStr != null) {
+        price = Double.parseDouble(priceStr);
+    }
+    
+    // Calculate GST (8% of the price)
+    double gstAmount = price * 0.08; // 8% GST
+    double totalPrice = price + gstAmount;
+    
+    // Round both prices to 2 decimal places
+    price = Math.round(price * 100.0) / 100.0;
+    totalPrice = Math.round(totalPrice * 100.0) / 100.0;
 %>
 
 <div class="container mt-5">
@@ -60,10 +75,11 @@
             <input type="time" id="time" name="time" class="form-control" required>
         </div>
         
-		<div class="mb-3">
-		    <label for="location" class="form-label">Location</label>
-		    <input type="text" id="location" name="location" class="form-control" placeholder="Enter your address or location" required>
-		</div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" id="location" name="location" class="form-control" placeholder="Enter your address or location" required>
+        </div>
+
         <!-- Payment Section -->
         <h2 class="mt-4">Payment Details</h2>
         <div class="mb-3">
@@ -81,66 +97,121 @@
                 <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
             </div>
         </div>
+        
+        <div class="mb-3">
+            <label for="price" class="form-label">Price (Excluding GST)</label>
+            <input type="text" id="price" name="price" class="form-control"
+                   value="<%= price %>" readonly> <!-- Display price excluding GST -->
+        </div>
+
+        <div class="mb-3">
+            <label for="totalPrice" class="form-label">Price (Including GST)</label>
+            <input type="text" id="totalPrice" name="totalPrice" class="form-control"
+                   value="<%= totalPrice %>" readonly> <!-- Display total price including GST -->
+        </div>
 
         <button type="submit" class="btn btn-primary">Submit Booking</button>
     </form>
 
-	<%
-	    Config neon = new Config();
-	    String url = neon.getConnectionUrl();
-	    String username = neon.getUser();
-	    String password = neon.getPassword();
-	
-	    if (request.getMethod().equalsIgnoreCase("POST")) {
-	        String serviceType = request.getParameter("serviceType");
-	        String name = request.getParameter("name");
-	        String email = request.getParameter("email");
-	        String phone = request.getParameter("phone");
-	        String dateStr = request.getParameter("date");
-	        String timeStr = request.getParameter("time");
-	        String location = request.getParameter("location"); 
-	        String cardNumber = request.getParameter("cardNumber");
-	        String expiryDate = request.getParameter("expiryDate");
-	        String cvv = request.getParameter("cvv");
-	
-	        try {
-	            java.sql.Date date = java.sql.Date.valueOf(dateStr);
-	            java.sql.Time time = java.sql.Time.valueOf(timeStr + ":00");
-	
-	            Class.forName("org.postgresql.Driver");
-	            Connection connection = DriverManager.getConnection(url, username, password);
-	
-	            String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv) " +
-	                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	            PreparedStatement statement = connection.prepareStatement(sql);
-	            statement.setString(1, serviceType);
-	            statement.setString(2, name);
-	            statement.setString(3, email);
-	            statement.setString(4, phone);
-	            statement.setDate(5, date);
-	            statement.setTime(6, time);
-	            statement.setString(7, location); // Bind the location
-	            statement.setString(8, cardNumber);
-	            statement.setString(9, expiryDate);
-	            statement.setString(10, cvv);
-	
-	            int rowsInserted = statement.executeUpdate();
-	
-	            if (rowsInserted > 0) {
-	                response.sendRedirect("bookings.jsp");
-	            } else {
-	                out.println("<div class='alert alert-danger mt-4'>Sorry, there was an error processing your booking.</div>");
-	            }
-	
-	            statement.close();
-	            connection.close();
-	        } catch (Exception e) {
-	            out.println("<div class='alert alert-danger mt-4'>Error: " + e.getMessage() + "</div>");
-	        }
-	    }
-	%>
+    <script>
+        // Credit Card Number Validation
+        const cardNumberInput = document.getElementById('cardNumber');
+        cardNumberInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, ''); // Allow only numbers
+            if (this.value.length > 16) {
+                this.value = this.value.slice(0, 16); // Limit to 16 digits
+            }
+        });
 
+        // Expiry Date Validation
+        const expiryDateInput = document.getElementById('expiryDate');
+        expiryDateInput.addEventListener('input', function () {
+            let value = this.value.replace(/\D/g, ''); // Remove non-digit characters
+            if (value.length > 4) {
+                value = value.slice(0, 4); // Limit to 4 digits
+            }
+
+            if (value.length > 2 && !value.includes('/')) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+
+            this.value = value;
+        });
+
+        // CVV Validation
+        const cvvInput = document.getElementById('cvv');
+        cvvInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, ''); // Allow only numbers
+            if (this.value.length > 3) {
+                this.value = this.value.slice(0, 3); // Limit to 3 digits
+            }
+        });
+    </script>
+
+    <%
+        Config neon = new Config();
+        String url = neon.getConnectionUrl();
+        String username = neon.getUser();
+        String password = neon.getPassword();
+        int rowsInserted = 0;
+
+        // Processing form data when the form is submitted
+        if (request.getMethod().equalsIgnoreCase("POST")) {
+            String serviceType = request.getParameter("serviceType");
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String dateStr = request.getParameter("date");
+            String timeStr = request.getParameter("time");
+            String location = request.getParameter("location"); 
+            String cardNumber = request.getParameter("cardNumber");
+            String expiryDate = request.getParameter("expiryDate");
+            String cvv = request.getParameter("cvv");
+            String priceStrPost = request.getParameter("price");
+
+            // Parse price and calculate GST again for the database
+            double pricePost = Double.parseDouble(priceStrPost);
+            double gstAmountPost = pricePost * 0.08;
+            double totalPricePost = pricePost + gstAmountPost;
+
+            try {
+                java.sql.Date date = java.sql.Date.valueOf(dateStr);
+                java.sql.Time time = java.sql.Time.valueOf(timeStr + ":00");
+
+                // Establish connection and execute insert
+                Class.forName("org.postgresql.Driver");
+                Connection connection = DriverManager.getConnection(url, username, password);
+                String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv, price) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setString(1, serviceType);
+                statement.setString(2, name);
+                statement.setString(3, email);
+                statement.setString(4, phone);
+                statement.setDate(5, date);
+                statement.setTime(6, time);
+                statement.setString(7, location);
+                statement.setString(8, cardNumber);
+                statement.setString(9, expiryDate);
+                statement.setString(10, cvv);
+                statement.setDouble(11, totalPricePost); // Insert total price including GST
+
+                rowsInserted = statement.executeUpdate();
+                statement.close();
+                connection.close();
+            } catch (Exception e) {
+                out.println("<div class='alert alert-danger mt-4'>Error: " + e.getMessage() + "</div>");
+            }
+
+            // If insertion is successful, redirect to bookings.jsp
+            if (rowsInserted > 0) {
+                response.sendRedirect("bookings.jsp"); // Redirect to bookings page
+                return; // Stop further processing
+            }
+        }
+    %>
 </div>
 
+<%@ include file="components/footer.html" %>
 </body>
 </html>

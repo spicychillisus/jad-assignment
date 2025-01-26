@@ -8,7 +8,7 @@ public class Member {
 	private Integer countryCode;
 	private Integer phoneNum;
 	private String email;
-	private String passwordHash; // cannot save as a text, i will find the inbuilt package for it later
+	private String passwordHash; 
 	
 	public Member(String name, Integer countryCode, Integer phoneNum, String email, String passwordHash) {
 		this.name = name;

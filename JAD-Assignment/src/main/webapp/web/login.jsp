@@ -3,22 +3,22 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Member Login</title>
+    <title>Login</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- For eye icon -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </head>
 <body>
-<%@ include file = "components/navbar.html" %>
-<%@ page import ="java.sql.*, java.*, java.util.*, members.*, pg.*"%>
+<%@ include file="components/navbar.html" %>
+<%@ page import="java.sql.*, java.util.*, pg.*"%>
 
 <%
 String sloganText = "";
-String[] slogans = {"Feeling Dirty", "Messy Situation"};
+String[] slogans = {"Welcome Back!", "Please Log In"};
 Random random = new Random();
 sloganText = slogans[random.nextInt(slogans.length)];
-String message = ""; // Message to display on successful login or error
+String message = ""; 
 
-// Database connection details (same as registration page)
+// Database connection details
 Config neon = new Config();
 String url = neon.getConnectionUrl();
 String username = neon.getUser();
@@ -33,30 +33,40 @@ if (email != null && passwordInput != null) {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(url, username, password);
 
-        // SQL query to find a user with the given email
-        String sql = "SELECT * FROM users WHERE email = ?";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, email);
-
-        ResultSet rs = pstmt.executeQuery();
-        
-        if (rs.next()) {
-            // Retrieve stored password hash from database
-            String storedPasswordHash = rs.getString("password");
-
-            // Compare entered password with stored hash
-            if (passwordInput.equals(storedPasswordHash)) {
-                // If a matching user is found, create session
-                session.setAttribute("userName", rs.getString("name"));           // Store user name
-                session.setAttribute("userEmail", rs.getString("email"));     // Store user email
-                session.setAttribute("userPhone", rs.getString("phone_number"));     // Store user phone
-                response.sendRedirect("index.jsp");
-            } else {
-                message = "<div class='error-message'>Invalid email or password. Please try again.</div>";
-            }
+        // Check if the email matches the admin credentials
+        if (email.equals("admin@email.com") && passwordInput.equals("admin")) {
+            // Admin login is valid
+			session.setAttribute("adminRole", "Admin");
+            session.setAttribute("userEmail", email);
+            session.setAttribute("userName", "Admin");
+            response.sendRedirect(request.getContextPath() + "/web/admin/adminDashboard.jsp");
         } else {
-            // If no user found with the email
-            message = "<div class='error-message'>User not found. Please check your email or register.</div>";
+            // SQL query to find a member with the given email
+            String sql = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, email);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                // Retrieve stored password hash from database
+                String storedPasswordHash = rs.getString("password");
+
+                // Compare entered password with stored hash
+                if (passwordInput.equals(storedPasswordHash)) {
+                    // If a matching member is found, create session
+                    session.setAttribute("userName", rs.getString("name"));           // Store user name
+                    session.setAttribute("userEmail", rs.getString("email"));     // Store user email
+                    session.setAttribute("userPhone", rs.getString("phone_number"));     // Store user phone
+                    session.setAttribute("userRole", "Member");  // Set user role as Member
+                    response.sendRedirect("index.jsp");  // Redirect to member's home page
+                } else {
+                    message = "<div class='error-message'>Invalid email or password. Please try again.</div>";
+                }
+            } else {
+                // If no user found with the email
+                message = "<div class='error-message'>User not found. Please check your email or register.</div>";
+            }
         }
 
         conn.close();
@@ -72,8 +82,8 @@ if (email != null && passwordInput != null) {
         <div class="row">
             <div class="col">
                 <%= message %>
-                <h2 class="montserrat-700"><%= sloganText %>?</h2>
-                <span class="inter-500">Engage with us now!</span>
+                <h2 class="montserrat-700"><%= sloganText %></h2>
+                <span class="inter-500">Access your account!</span>
             </div>
             <div class="col-4">
                 <!-- Login Form -->
@@ -86,7 +96,7 @@ if (email != null && passwordInput != null) {
                         <form class="inter-normal mt-3" method="post" action="">
                             <div class="form-group inter-normal mb-3">
                                 <label for="email" class="w-100">Email address</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="e.g. soda@gmail.com" required>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="e.g. user@email.com" required>
                             </div>
                             <div class="form-group position-relative">
                                 <label for="password" class="w-100">Password</label>
@@ -105,11 +115,10 @@ if (email != null && passwordInput != null) {
 </div>
 
 <script>
-// Function to toggle password visibility
 function togglePassword() {
     var passwordField = document.getElementById("password");
     var eyeIcon = document.getElementById("eyebox");
-    
+
     if (passwordField.type === "password") {
         passwordField.type = "text";
         eyeIcon.classList.add("fa-eye-slash");
@@ -119,6 +128,7 @@ function togglePassword() {
     }
 }
 </script>
-    <%@ include file="components/footer.html" %>
+
+<%@ include file="components/footer.html" %>
 </body>
 </html>

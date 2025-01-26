@@ -10,7 +10,31 @@
 </head>
 <body>
 <%@ include file="components/navbar.html" %>
-<%@ page import="java.sql.*, java.*" %>
+<%@ page import="java.sql.*, java.util.*, pg.*, services.*" %>
+
+<%
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+    
+    try {
+        Config neon = new Config();
+        String url = neon.getConnectionUrl();     
+        String username = neon.getUser();       	
+        String password = neon.getPassword();    
+
+        Class.forName("org.postgresql.Driver");
+        conn = DriverManager.getConnection(url, username, password);
+        
+        // Updated SQL query to include category grouping
+        String query = "SELECT * FROM services ORDER BY category, servicetitle";
+                     
+        stmt = conn.createStatement();
+        rs = stmt.executeQuery(query);
+
+        // Variables to track the current category title
+        String currentCategory = "";
+%>
 
     <div class="content-container">
         <h1>Our Cleaning Services</h1>
@@ -18,41 +42,55 @@
 
         <!-- Service Cards Container -->
         <div class="service-card-container">
-            <div class="service-card homeCleaning">
-                <i class="fas fa-home"></i>
-                <h2>Home Cleaning</h2>
-                <p>Our home cleaning service covers all areas of your house, including dusting, vacuuming, and thorough cleaning of kitchens and bathrooms.</p>
-                <p class="price">$99.99</p>
-                <a href="bookService.jsp?service=homeCleaning" class="book-button">Book Now</a>
+        
+            <%
+                // Loop through the result set and display each service dynamically
+                while (rs.next()) {
+                    String serviceTitle = rs.getString("servicetitle");
+                    String serviceDescription = rs.getString("servicedescription");
+                    double price = rs.getDouble("price");
+                    String serviceId = serviceTitle.toLowerCase().replace(" ", ""); // Creates unique ID for each service
+                    String iconClass = ""; // Default icon
+                    String category = rs.getString("category"); // Get category from database
+                    
+                    // Print category header only once for each category
+                    if (!currentCategory.equals(category)) {
+                        out.println("<h2>" + category + "</h2>");
+                        currentCategory = category;
+                    }
+            %>
+
+            <div class="service-card <%= serviceId %>">
+                <% if (!iconClass.isEmpty()) { %>
+                    <i class="<%= iconClass %>"></i> <!-- Dynamically set the icon -->
+                <% } %>
+                <h3><%= serviceTitle %></h3>
+                <p><%= serviceDescription %></p>
+				<a href="bookService.jsp?service=<%= serviceId %>&price=<%= price %>" class="book-button">Book Now</a>
             </div>
 
-            <div class="service-card officeCleaning">
-                <i class="fas fa-building"></i>
-                <h2>Office Cleaning</h2>
-                <p>Our office cleaning service ensures a clean and productive work environment, with services tailored to suit your business hours and requirements.</p>
-                <p class="price">$149.99</p>
-                <a href="bookService.jsp?service=officeCleaning" class="book-button">Book Now</a>
-            </div>
-
-            <!-- Updated Toilet Cleaning Card -->
-            <div class="service-card toiletCleaning">
-                <i class="fas fa-toilet"></i> <!-- Changed icon to toilet -->
-                <h2>Toilet Cleaning</h2>
-                <p>Our toilet cleaning service ensures cleanliness and hygiene, leaving your toilets fresh and sparkling clean.</p>
-                <p class="price">$79.99</p>
-                <a href="bookService.jsp?service=toiletCleaning" class="book-button">Book Now</a>
-            </div>
-
-            <div class="service-card upholsteryCleaning">
-                <i class="fas fa-couch"></i>
-                <h2>Upholstery Cleaning</h2>
-                <p>Our upholstery cleaning service revives your furniture, removing stains and dirt from sofas, chairs, and more.</p>
-                <p class="price">$89.99</p>
-                <a href="bookService.jsp?service=upholsteryCleaning" class="book-button">Book Now</a>
-            </div>
+            <%
+                }
+            %>
         </div>
     </div>
 
-    <%@ include file="components/footer.html" %>
+<%
+    } catch (Exception e) {
+        e.printStackTrace();
+        out.println("<div class='alert alert-danger'>Error: " + e.getMessage() + "</div>");
+    } finally {
+        // Close database connections
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+%>
+
+<%@ include file="components/footer.html" %>
 </body>
 </html>

@@ -1,5 +1,5 @@
-<footer class="text-center py-3 mt-auto" style="background: linear-gradient(45deg, #28a745, #218838); color: white;">
-    <p> © 2024 CleanEase Inc. All rights reserved.</p>
+<footer class="text-center py-3 mt-auto">
+    <p>&copy; 2024 CleanEase Inc. All rights reserved.</p>
     <a href="contact-us.jsp" class="btn btn-link text-white">Contact Us</a>
 </footer>
 
@@ -8,54 +8,40 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
-        margin: 0; /* Remove any spacing around the body */
+        margin: 0;
     }
 
     .container {
-        flex: 1; /* Makes the container take up the remaining space */
+        flex: 1;
     }
 
     footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.2); /* Subtle divider line */
-        font-family: 'Arial', sans-serif; /* Clean and modern font */
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Slight text shadow for better readability */
+        background: linear-gradient(45deg, #28a745, #218838); /* Green gradient */
+        color: white;
         padding: 20px;
-        background: linear-gradient(45deg, #28a745, #218838); /* Green gradient background */
+        font-family: 'Arial', sans-serif;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        border-top: 2px solid rgba(255, 255, 255, 0.2); /* Subtle divider line */
     }
 
     footer p {
         margin: 0;
         font-size: 1.2em;
+        line-height: 1.5;
     }
 
-    .footer-links {
-        margin-top: 10px;
+    footer p:hover {
+        color: #a9f5d0; /* Hover effect */
     }
 
-    footer a {
-        text-decoration: none;
-        font-weight: bold;
-        margin: 0 15px;
-        padding: 8px;
-        font-size: 1em;
-    }
-
-    footer a:hover {
-        text-decoration: underline;
-        color: #a9f5d0; /* Light green shade for hover effect */
-    }
-
-    footer a:focus {
-        outline: none;
-        color: #81c784; /* Slightly darker green when focused */
-    }
-
-    footer .footer-links a {
-        transition: color 0.3s ease, transform 0.3s ease;
-    }
-
-    footer .footer-links a:hover {
-        transform: scale(1.1); /* Slight zoom effect on hover */
-        color: #a9f5d0;
+    footer:before {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 60px;
+        height: 4px;
+        background: white;
+        border-radius: 2px;
+        margin-bottom: 10px;
     }
 </style>

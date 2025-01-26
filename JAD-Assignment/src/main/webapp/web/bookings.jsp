@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*, java.*, pg.*" %>
+<%@ page import="java.sql.*, pg.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,31 +17,26 @@
     <p>Below are the details of your upcoming service bookings:</p>
 
     <%
-        // Get the user email from the session or redirect to login page if not found
         String userEmail = (String) session.getAttribute("userEmail");
         if (userEmail == null || userEmail.isEmpty()) {
-            response.sendRedirect("member-login.jsp");
+            response.sendRedirect("login.jsp");
             return;
         }
 
-        // Using the Config class to get the PostgreSQL database connection
         Config neon = new Config();
         String url = neon.getConnectionUrl();
         String username = neon.getUser();
         String password = neon.getPassword();
 
         try {
-            // Connect to the database
             Class.forName("org.postgresql.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
 
-            // Query to get all bookings for the user
-            String sql = "SELECT service_type, customer_name, email, phone, date, time FROM bookings WHERE email = ?";
+            String sql = "SELECT id, service_type, customer_name, email, phone, date, time FROM bookings WHERE email = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, userEmail);  // Use the session user email to filter bookings
+            statement.setString(1, userEmail);
             ResultSet resultSet = statement.executeQuery();
 
-            // Display the bookings in a table
             if (resultSet.next()) {
     %>
     <table class="table mt-4">
@@ -53,11 +48,13 @@
                 <th>Phone</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
     <%
                 do {
+                    int bookingId = resultSet.getInt("id");
     %>
             <tr>
                 <td><%= resultSet.getString("service_type") %></td>
@@ -66,6 +63,10 @@
                 <td><%= resultSet.getString("phone") %></td>
                 <td><%= resultSet.getDate("date") %></td>
                 <td><%= resultSet.getTime("time") %></td>
+                <td>
+                    <a href="updateBooking.jsp?id=<%= bookingId %>" class="btn btn-warning btn-sm">Update</a>
+                    <a href="cancelBooking.jsp?id=<%= bookingId %>" class="btn btn-danger btn-sm">Cancel</a>
+                </td>
             </tr>
     <%
                 } while (resultSet.next());
@@ -77,7 +78,6 @@
                 out.println("<p>No bookings found.</p>");
             }
 
-            // Close resources
             resultSet.close();
             statement.close();
             connection.close();
@@ -85,9 +85,8 @@
             out.println("<div class='alert alert-danger mt-4'>Error: " + e.getMessage() + "</div>");
         }
     %>
-
 </div>
 
-
+<%@ include file="components/footer.html" %>
 </body>
 </html>

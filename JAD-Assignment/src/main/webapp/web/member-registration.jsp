@@ -8,25 +8,49 @@
     <script>
         // Function to validate the form before submission
         function validateForm() {
-            // Clear any previous error messages
             const errorContainer = document.getElementById("passwordError");
-            errorContainer.innerHTML = ""; // Clear the error message
+            errorContainer.innerHTML = ""; // Clear any previous error messages
 
-            const password = document.forms["registrationForm"]["password"].value;
-            const confirmPassword = document.forms["registrationForm"]["confirmPassword"].value;
+            const form = document.forms["registrationForm"];
+            const password = form["password"].value;
+            const confirmPassword = form["confirmPassword"].value;
+            const phoneNum = form["phoneNum"].value;
+            const countryCode = form["countryCode"].value;
 
+            // Password validation
             if (password !== confirmPassword) {
                 errorContainer.innerHTML = "<div class='error-message'>Password and Confirm Password do not match.</div>";
-                return false; // Prevent form submission
+                return false;
             }
 
-            return true; // Allow form submission
+            // Phone number validation
+            const phoneRegex = /^[1-9][0-9]{6,11}$/; // Assuming 7-12 digit valid numbers (excluding leading 0)
+            if (!phoneRegex.test(phoneNum)) {
+                errorContainer.innerHTML = "<div class='error-message'>Invalid phone number: Must contain 7-12 digits without leading zeros.</div>";
+                return false;
+            }
+
+            // Valid country-code-based checks (e.g., length)
+            const countryPhoneLengths = {
+                "+65": 8, // Singapore
+                "+60": 9, // Malaysia
+                "+95": 10, // Myanmar
+                "+86": 11, // China
+                "+63": 10  // Philippines
+            };
+
+            if (countryPhoneLengths[countryCode] && phoneNum.length !== countryPhoneLengths[countryCode]) {
+                errorContainer.innerHTML = `<div class='error-message'>Invalid phone number: Expected ${countryPhoneLengths[countryCode]} digits for ${countryCode}.</div>`;
+                return false;
+            }
+
+            return true;
         }
     </script>
 </head>
 <body>
 <%@ include file="components/navbar.html" %>
-<%@ page import="java.sql.*, java.util.ArrayList, java.util.Random, java.util.regex.*, members.*, pg.*" %>
+<%@ page import="java.sql.*, java.util.ArrayList, java.util.HashMap, java.util.Random, java.util.regex.*, members.*, pg.*" %>
 
 <%
 String sloganText = "";
@@ -47,14 +71,15 @@ String username = neon.getUser();
 String password = neon.getPassword();
 
 String message = ""; // Message to display
-
 String name = request.getParameter("name");
 String countryCode = request.getParameter("countryCode");
 String phoneNum = request.getParameter("phoneNum");
 String email = request.getParameter("email");
 String passwordInput = request.getParameter("password");
 
-if (name != null && countryCode != null && phoneNum != null && email != null && passwordInput != null) {
+if (email != null && email.equalsIgnoreCase("admin@email.com")) {
+    message = "<div class='error-message'>The email address <strong>admin@email.com</strong> is not allowed for registration.</div>";
+} else if (name != null && countryCode != null && phoneNum != null && email != null && passwordInput != null) {
     try {
         // Validate username for special characters
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9 ]+$");
@@ -62,44 +87,67 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
         if (!matcher.matches()) {
             message = "<div class='error-message'>Invalid username: Special characters are not allowed.</div>";
         } else {
-            // Proceed with database operations
-            Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(url, username, password);
+            // Phone number validation
+            Pattern phonePattern = Pattern.compile("^[1-9][0-9]{6,11}$");
+            Matcher phoneMatcher = phonePattern.matcher(phoneNum);
 
-            // Check if the phone number is already registered
-            String checkPhoneSql = "SELECT COUNT(*) FROM users WHERE phone_number = ?";
-            PreparedStatement checkPhoneStmt = conn.prepareStatement(checkPhoneSql);
-            checkPhoneStmt.setString(1, phoneNum);
-            ResultSet rs = checkPhoneStmt.executeQuery();
-            rs.next();
-            int phoneCount = rs.getInt(1);
-
-            if (phoneCount > 0) {
-                message = "<div class='error-message'>The phone number <strong>" + phoneNum + "</strong> is already associated with another account. Please use a different phone number.</div>";
+            if (!phoneMatcher.matches()) {
+                message = "<div class='error-message'>Invalid phone number: Must contain 7-12 digits and not start with 0.</div>";
             } else {
-                // Insert new user
-                String sql = "INSERT INTO users (name, country_code, phone_number, email, password) VALUES (?, ?, ?, ?, ?)";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, name);
-                pstmt.setString(2, countryCode);
-                pstmt.setString(3, phoneNum);
-                pstmt.setString(4, email);
-                pstmt.setString(5, passwordInput); // Consider hashing this before saving
+                // Validate based on country-specific lengths
+                HashMap<String, Integer> countryPhoneLengths = new HashMap<>();
+                countryPhoneLengths.put("+65", 8); // Singapore
+                countryPhoneLengths.put("+60", 9); // Malaysia
+                countryPhoneLengths.put("+95", 10); // Myanmar
+                countryPhoneLengths.put("+86", 11); // China
+                countryPhoneLengths.put("+63", 10); // Philippines
 
-                int rowsInserted = pstmt.executeUpdate();
-                if (rowsInserted > 0) {
-                    // Store user email and name in session
-                    session.setAttribute("userEmail", email);
-                    session.setAttribute("userName", name); // Store user's name
+                if (countryPhoneLengths.containsKey(countryCode) &&
+                    phoneNum.length() != countryPhoneLengths.get(countryCode)) {
+                    message = "<div class='error-message'>Invalid phone number: Expected "
+                              + countryPhoneLengths.get(countryCode) + " digits for "
+                              + countryCode + ".</div>";
+                } else {
+                    // Proceed with database operations
+                    Class.forName("org.postgresql.Driver");
+                    Connection conn = DriverManager.getConnection(url, username, password);
 
-                    message = "<div class='success-message'>Registration successful! Welcome, " + name + ".</div>";
-                    
-                    // Redirect to index.jsp after successful registration
-                    response.sendRedirect("index.jsp");
-                    return;
+                    // Check if the phone number is already registered
+                    String checkPhoneSql = "SELECT COUNT(*) FROM users WHERE phone_number = ?";
+                    PreparedStatement checkPhoneStmt = conn.prepareStatement(checkPhoneSql);
+                    checkPhoneStmt.setString(1, phoneNum);
+                    ResultSet rs = checkPhoneStmt.executeQuery();
+                    rs.next();
+                    int phoneCount = rs.getInt(1);
+
+                    if (phoneCount > 0) {
+                        message = "<div class='error-message'>The phone number <strong>" + phoneNum + "</strong> is already associated with another account. Please use a different phone number.</div>";
+                    } else {
+                        // Insert new user
+                        String sql = "INSERT INTO users (name, country_code, phone_number, email, password) VALUES (?, ?, ?, ?, ?)";
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, name);
+                        pstmt.setString(2, countryCode);
+                        pstmt.setString(3, phoneNum);
+                        pstmt.setString(4, email);
+                        pstmt.setString(5, passwordInput); // Consider hashing this before saving
+
+                        int rowsInserted = pstmt.executeUpdate();
+                        if (rowsInserted > 0) {
+                            // Store user email and name in session
+                            session.setAttribute("userEmail", email);
+                            session.setAttribute("userName", name); // Store user's name
+
+                            message = "<div class='success-message'>Registration successful! Welcome, " + name + ".</div>";
+                            
+                            // Redirect to index.jsp after successful registration
+                            response.sendRedirect("index.jsp");
+                            return;
+                        }
+                    }
+                    conn.close();
                 }
             }
-            conn.close();
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -159,15 +207,12 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
                             <div class="form-group position-relative">
                                 <input type="password" class="form-control" name="password" placeholder="Password" required>
                             </div>
-                            <div class="form-group position-relative mt-3">
+                            <div class="form-group position-relative">
                                 <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" required>
+                                <div id="passwordError"></div>
                             </div>
-                            
-                            <!-- Password Mismatch Error Message -->
-                            <div id="passwordError" class="mb-3"></div>
-
-                            <div class="d-flex justify-content-center">
-                                <button type="submit" class="btn btn-dark mt-3 inter-500">Register</button>
+                            <div class="d-flex justify-content-center mt-3">
+                                <input type="submit" class="btn btn-success w-100" value="Submit">
                             </div>
                         </form>
                     </div>
@@ -176,6 +221,7 @@ if (name != null && countryCode != null && phoneNum != null && email != null && 
         </div>
     </div>
 </div>
-    <%@ include file="components/footer.html" %>
+
+<%@ include file="components/footer.html" %>
 </body>
 </html>
