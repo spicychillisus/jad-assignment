@@ -45,15 +45,6 @@
             ResultSet resultSet = statement.executeQuery();
 
 
-            // Connect to the database
-            Class.forName("org.postgresql.Driver");
-            Connection connection = DriverManager.getConnection(url, username, password);
-
-            // Query to get all bookings for the user
-            String sql = "SELECT service_type, customer_name, email, phone, date, time FROM bookings WHERE email = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, userEmail);  // Use the session user email to filter bookings
-            ResultSet resultSet = statement.executeQuery();
 
             // Display the bookings in a table
 

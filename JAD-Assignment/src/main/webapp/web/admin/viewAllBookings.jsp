@@ -8,7 +8,7 @@
 </head>
 <body>
 <%@ include file="../components/admin-navbar.html" %>
-<%@ page import="java.sql.*, java.util.*, admin.*, pg.*, services.*" %>
+<%@ page import="java.sql.*, java.util.*, admin.*, services.*, pg.*" %>
 
 <div class="container">
         <h1 class="text-center">All Bookings</h1>
@@ -33,7 +33,7 @@
 	                        response.sendRedirect("../login.jsp");
 	                        return; // Stop further processing if not logged in as admin
 	                    }
-						Config neon = new Config();
+                    	Config neon = new Config();
 						String url = neon.getConnectionUrl();
 						String username = neon.getUser();
 						String password = neon.getPassword();

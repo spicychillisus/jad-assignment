@@ -20,7 +20,7 @@
         return; 
     }
 
-<<<<<<< HEAD
+
 	Connection conn = null;
 	String svcPaymentPrice = request.getParameter("price");
 	double servicePaymentPrice = Double.parseDouble(svcPaymentPrice);
@@ -29,7 +29,7 @@
 	// advanced feature: discount
 	Double discount = 0.0;
 	System.out.println(servicePaymentPrice);
-=======
+
     // Get the price from the request or set a default if not provided
     String priceStr = request.getParameter("price");
     double price = 0.0;
@@ -44,7 +44,7 @@
     // Round both prices to 2 decimal places
     price = Math.round(price * 100.0) / 100.0;
     totalPrice = Math.round(totalPrice * 100.0) / 100.0;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
+
 %>
 
 <div class="container mt-5">
@@ -245,13 +245,9 @@
                 // Establish connection and execute insert
                 Class.forName("org.postgresql.Driver");
                 Connection connection = DriverManager.getConnection(url, username, password);
-<<<<<<< HEAD
-                String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-=======
+
                 String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv, price) " +
                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.setString(1, serviceType);
                 statement.setString(2, name);

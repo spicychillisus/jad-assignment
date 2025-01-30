@@ -31,7 +31,7 @@
 	                        response.sendRedirect("../login.jsp");
 	                        return; // Stop further processing if not logged in as admin
 	                    }
-						Config neon = new Config();
+                    	Config neon = new Config();
 						String url = neon.getConnectionUrl();
 						String username = neon.getUser();
 						String password = neon.getPassword();

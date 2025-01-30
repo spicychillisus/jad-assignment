@@ -13,19 +13,16 @@
 <%@ page import="java.sql.*, java.util.*, pg.*, services.*" %>
 
 <%
-<<<<<<< HEAD
-    // Default search term (empty)
-    String searchQuery = request.getParameter("search");
 
-    // Database connection setup
-=======
+
+
     String searchQuery = request.getParameter("searchQuery"); // Get the search query from the user
     
     if (searchQuery == null) {
         searchQuery = ""; // Default to an empty string if no search term is provided
     }
     
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
+
     Connection conn = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -38,15 +35,10 @@
 
         Class.forName("org.postgresql.Driver");
         conn = DriverManager.getConnection(url, username, password);
-<<<<<<< HEAD
 
-        // Modify query to filter services based on search term
-        String query = "SELECT * FROM services WHERE servicetitle ILIKE ? OR servicedescription ILIKE ?";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1, "%" + (searchQuery != null ? searchQuery : "") + "%");
-        ps.setString(2, "%" + (searchQuery != null ? searchQuery : "") + "%");
-        rs = ps.executeQuery();
-=======
+
+
+
         
         // SQL query with a WHERE clause to filter by service title or description
         String query = "SELECT * FROM services WHERE servicetitle ILIKE ? OR servicedescription ILIKE ? ORDER BY category, servicetitle";
@@ -59,7 +51,6 @@
 
         // Variables to track the current category title
         String currentCategory = "";
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 %>
 
     <div class="content-container">
@@ -87,12 +78,10 @@
                     String serviceTitle = rs.getString("servicetitle");
                     String serviceDescription = rs.getString("servicedescription");
                     double price = rs.getDouble("price");
-<<<<<<< HEAD
                     session.setAttribute("servicePrice", price);
-=======
+
                     double rating = rs.getDouble("rating"); // Rating field
                     int demand = rs.getInt("demand"); // Demand field
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
                     String serviceId = serviceTitle.toLowerCase().replace(" ", ""); // Creates unique ID for each service
                     session.setAttribute("serviceID", serviceId);
                     String iconClass = ""; // Default icon

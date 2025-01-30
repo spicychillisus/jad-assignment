@@ -29,7 +29,7 @@
 
     // Fetch service data from the database
     try {
-        Config neon = new Config();
+    	Config neon = new Config();
         String url = neon.getConnectionUrl();
         String username = neon.getUser();
         String password = neon.getPassword();
