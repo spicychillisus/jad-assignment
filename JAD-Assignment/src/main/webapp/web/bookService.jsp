@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>Book Cleaning Service</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./css/bookService.css">
 </head>
 <body>
 
@@ -18,6 +19,21 @@
         response.sendRedirect("login.jsp");
         return; 
     }
+
+    // Get the price from the request or set a default if not provided
+    String priceStr = request.getParameter("price");
+    double price = 0.0;
+    if (priceStr != null) {
+        price = Double.parseDouble(priceStr);
+    }
+    
+    // Calculate GST (8% of the price)
+    double gstAmount = price * 0.08; // 8% GST
+    double totalPrice = price + gstAmount;
+    
+    // Round both prices to 2 decimal places
+    price = Math.round(price * 100.0) / 100.0;
+    totalPrice = Math.round(totalPrice * 100.0) / 100.0;
 %>
 
 <div class="container mt-5">
@@ -66,24 +82,39 @@
         </div>
 
         <!-- Payment Section -->
-        <h2 class="mt-4">Payment Details</h2>
-        <div class="mb-3">
-            <label for="cardNumber" class="form-label">Credit Card Number</label>
-            <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
-        </div>
+        <div class="payment-section">
+            <h2>Payment Details</h2>
+            <div class="payment-card-info">
+                <div class="form-row">
+                    <label for="cardNumber" class="form-label">Credit Card Number</label>
+                    <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
+                </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="expiryDate" class="form-label">Expiry Date</label>
-                <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY" required>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="cvv" class="form-label">CVV</label>
-                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
-            </div>
-        </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <label for="price" class="form-label">Price (Excluding GST)</label>
+                    <input type="text" id="price" name="price" class="form-control"
+                           value="<%= price %>" readonly> <!-- Display price excluding GST -->
+                </div>
 
-        <button type="submit" class="btn btn-primary">Submit Booking</button>
+                <div class="form-row">
+                    <label for="totalPrice" class="form-label">Price (Including GST)</label>
+                    <input type="text" id="totalPrice" name="totalPrice" class="form-control"
+                           value="<%= totalPrice %>" readonly> <!-- Display total price including GST -->
+                </div>
+            </div>
+            <button type="submit" class="payment-button">Submit Booking</button>
+        </div>
     </form>
 
     <script>
@@ -140,6 +171,13 @@
             String cardNumber = request.getParameter("cardNumber");
             String expiryDate = request.getParameter("expiryDate");
             String cvv = request.getParameter("cvv");
+            String priceStrPost = request.getParameter("price");
+
+            // Parse price and calculate GST again for the database
+            double pricePost = Double.parseDouble(priceStrPost);
+            double gstAmountPost = pricePost * 0.08;
+            double totalPricePost = pricePost + gstAmountPost;
+
 
             try {
                 java.sql.Date date = java.sql.Date.valueOf(dateStr);
@@ -148,8 +186,8 @@
                 // Establish connection and execute insert
                 Class.forName("org.postgresql.Driver");
                 Connection connection = DriverManager.getConnection(url, username, password);
-                String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv, price) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.setString(1, serviceType);
                 statement.setString(2, name);
@@ -161,6 +199,7 @@
                 statement.setString(8, cardNumber);
                 statement.setString(9, expiryDate);
                 statement.setString(10, cvv);
+                statement.setDouble(11, totalPricePost); // Insert total price including GST
 
                 rowsInserted = statement.executeUpdate();
                 statement.close();
