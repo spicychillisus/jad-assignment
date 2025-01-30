@@ -18,6 +18,15 @@
         response.sendRedirect("login.jsp");
         return; 
     }
+
+	Connection conn = null;
+	String svcPaymentPrice = request.getParameter("price");
+	double servicePaymentPrice = Double.parseDouble(svcPaymentPrice);
+	String cleaningService = request.getParameter("service");
+	
+	// advanced feature: discount
+	Double discount = 0.0;
+	System.out.println(servicePaymentPrice);
 %>
 
 <div class="container mt-5">
@@ -67,23 +76,50 @@
 
         <!-- Payment Section -->
         <h2 class="mt-4">Payment Details</h2>
-        <div class="mb-3">
-            <label for="cardNumber" class="form-label">Credit Card Number</label>
-            <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
+        <div class="container">
+        	<div class="row">
+        		<div class="col">
+        			<div class="mb-3">
+			            <label for="cardNumber" class="form-label">Credit Card Number</label>
+			            <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
+			        </div>
+			        <div class="row">
+			            <div class="col-md-6 mb-3">
+			                <label for="expiryDate" class="form-label">Expiry Date</label>
+			                <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY" required>
+			            </div>
+			            <div class="col-md-6 mb-3">
+			                <label for="cvv" class="form-label">CVV</label>
+			                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
+			            </div>
+			        </div>
+        		</div>
+        		<div class="col">
+        			<h3>Booking Summary</h3>
+        			<table class="table">
+				        <tbody>
+				          <tr>
+				            <td><%= request.getParameter("service") %> service</td>
+				            <td class="h5"><%= servicePaymentPrice %></td>
+				          </tr>
+				          <tr>
+				            <td>Discounts Applied</td>
+				            <td class="h5"><%= discount %></td>
+				          </tr>
+				          <tr>
+				            <td>Subtotal</td>
+				            <td class="h5"><%= servicePaymentPrice - discount %></td>
+				          </tr>
+				        </tbody>
+				    </table>
+        		</div>
+        	</div>
         </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="expiryDate" class="form-label">Expiry Date</label>
-                <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY" required>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="cvv" class="form-label">CVV</label>
-                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit Booking</button>
+		
+		<div class="d-flex justify-content-center align-items-center">
+			<button type="submit" class="btn btn-primary">Submit Booking</button>
+		</div>
+        
     </form>
 
     <script>
@@ -149,7 +185,7 @@
                 Class.forName("org.postgresql.Driver");
                 Connection connection = DriverManager.getConnection(url, username, password);
                 String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.setString(1, serviceType);
                 statement.setString(2, name);

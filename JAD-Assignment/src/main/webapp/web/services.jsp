@@ -13,6 +13,10 @@
 <%@ page import="java.sql.*, java.util.*, pg.*, services.*" %>
 
 <%
+    // Default search term (empty)
+    String searchQuery = request.getParameter("search");
+
+    // Database connection setup
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -25,15 +29,23 @@
 
         Class.forName("org.postgresql.Driver");
         conn = DriverManager.getConnection(url, username, password);
-        
-        String query = "SELECT * FROM services";
-        stmt = conn.createStatement();
-        rs = stmt.executeQuery(query);
+
+        // Modify query to filter services based on search term
+        String query = "SELECT * FROM services WHERE servicetitle ILIKE ? OR servicedescription ILIKE ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, "%" + (searchQuery != null ? searchQuery : "") + "%");
+        ps.setString(2, "%" + (searchQuery != null ? searchQuery : "") + "%");
+        rs = ps.executeQuery();
 %>
 
     <div class="content-container">
         <h1>Our Cleaning Services</h1>
         <p class="text-center">Choose from our range of cleaning services, designed to keep your spaces spotless and comfortable.</p>
+
+        <!-- Search Bar -->
+        <form method="get" class="mb-4">
+            <input type="text" name="search" class="form-control" placeholder="Search for services..." value="<%= searchQuery != null ? searchQuery : "" %>">
+        </form>
 
         <!-- Service Cards Container -->
         <div class="service-card-container">
@@ -44,7 +56,9 @@
                     String serviceTitle = rs.getString("servicetitle");
                     String serviceDescription = rs.getString("servicedescription");
                     double price = rs.getDouble("price");
+                    session.setAttribute("servicePrice", price);
                     String serviceId = serviceTitle.toLowerCase().replace(" ", ""); // Creates unique ID for each service
+                    session.setAttribute("serviceID", serviceId);
                     String iconClass = ""; // Default icon
 
                     // Dynamically assign icons based on service type
@@ -80,9 +94,9 @@
                 <h2><%= serviceTitle %></h2>
                 <p><%= serviceDescription %></p>
                 <p class="price">$<%= price %></p>
-                <a href="bookService.jsp?service=<%= serviceId %>" class="book-button">Book Now</a>
+                <a href="bookService.jsp?service=<%= serviceId %>&price=<%= price %>" class="book-button">Book Now</a>
             </div>
-
+            
             <%
                 }
             %>

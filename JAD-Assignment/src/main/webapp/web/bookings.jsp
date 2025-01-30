@@ -53,6 +53,7 @@
                 <th>Phone</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Payment Status</th>
             </tr>
         </thead>
         <tbody>
@@ -66,6 +67,11 @@
                 <td><%= resultSet.getString("phone") %></td>
                 <td><%= resultSet.getDate("date") %></td>
                 <td><%= resultSet.getTime("time") %></td>
+                <td>
+                	<div class="btn btn-outline-success user-select-none">
+                		<span>Paid</span>
+                	</div>
+                </td>
             </tr>
     <%
                 } while (resultSet.next());
