@@ -178,6 +178,7 @@
             double gstAmountPost = pricePost * 0.08;
             double totalPricePost = pricePost + gstAmountPost;
 
+
             try {
                 java.sql.Date date = java.sql.Date.valueOf(dateStr);
                 java.sql.Time time = java.sql.Time.valueOf(timeStr + ":00");

@@ -10,7 +10,7 @@ public class Member {
 	private String email;
 	private String passwordHash; 
 	
-	public Member(String name, Integer countryCode, Integer phoneNum, String email, String passwordHash) {
+	public Member(String name, Integer countryCode, Integer phoneNum, String email, String passwordHash, String date) {
 		this.name = name;
 		this.countryCode = countryCode;
 		this.phoneNum = phoneNum;
