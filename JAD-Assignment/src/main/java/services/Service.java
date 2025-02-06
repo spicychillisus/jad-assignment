@@ -1,57 +1,55 @@
 package services;
 
 public class Service {
-    // Private fields
-    private int id;
-    private String servicetitle;
-    private String servicedescription;
-    private double price;
-
-    // Constructor
-    public Service(int id, String servicetitle, String servicedescription, double price) {
-        this.id = id;
-        this.servicetitle = servicetitle;
-        this.servicedescription = servicedescription;
-        this.price = price;
-    }
-
-    // Getter for id
-    public int getId() {
-        return id;
-    }
-
-    // Setter for id
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    // Getter for servicetitle
-    public String getServicetitle() {
-        return servicetitle;
-    }
-
-    // Setter for servicetitle
-    public void setServicetitle(String servicetitle) {
-        this.servicetitle = servicetitle;
-    }
-
-    // Getter for servicedescription
-    public String getServicedescription() {
-        return servicedescription;
-    }
-
-    // Setter for servicedescription
-    public void setServicedescription(String servicedescription) {
-        this.servicedescription = servicedescription;
-    }
-
-    // Getter for price
-    public double getPrice() {
-        return price;
-    }
-
-    // Setter for price
-    public void setPrice(double price) {
-        this.price = price;
-    }
+	private int serviceid;
+	private String servicetitle;
+	private String servicedescription;
+	private double price;
+	private String category;
+	private Double rating;
+	private int demand;
+	public int getServiceid() {
+		return serviceid;
+	}
+	public void setServiceid(int serviceid) {
+		this.serviceid = serviceid;
+	}
+	public String getServicetitle() {
+		return servicetitle;
+	}
+	public void setServicetitle(String servicetitle) {
+		this.servicetitle = servicetitle;
+	}
+	public String getServicedescription() {
+		return servicedescription;
+	}
+	public void setServicedescription(String servicedescription) {
+		this.servicedescription = servicedescription;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public Double getRating() {
+		return rating;
+	}
+	public void setRating(Double rating) {
+		this.rating = rating;
+	}
+	public int getDemand() {
+		return demand;
+	}
+	public void setDemand(int demand) {
+		this.demand = demand;
+	}
+	
+	
 }

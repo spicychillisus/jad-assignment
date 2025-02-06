@@ -36,6 +36,9 @@
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Price</th>
+                        <th scope="col">Service</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Demand</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -72,16 +75,22 @@
                             ResultSet resultSet = statement.executeQuery();
                             
                             while (resultSet.next()) {
-                                int id = resultSet.getInt("id");
+                                int id = resultSet.getInt("serviceid");
                                 String serviceTitle = resultSet.getString("servicetitle");
                                 String serviceDescription = resultSet.getString("servicedescription");
                                 double price = resultSet.getDouble("price");
+                                String category = resultSet.getString("category");
+                                double rating = resultSet.getDouble("rating");
+                                int demand = resultSet.getInt("demand");
                     %>
                     <tr>
                         <th scope="row"><%= id %></th>
                         <td><%= serviceTitle %></td>
                         <td><%= serviceDescription %></td>
                         <td><%= price %></td>
+                        <td><%= category %></td>
+                        <td><%= rating %></td>
+                        <td><%= demand %></td>
                         <td>
                             <a href="editService.jsp?serviceId=<%=id%>" class="btn btn-primary">Edit</a>
                         </td>

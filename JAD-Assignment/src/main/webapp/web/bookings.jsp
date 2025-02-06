@@ -59,14 +59,14 @@
                 <th>Phone</th>
                 <th>Date</th>
                 <th>Time</th>
-<<<<<<< HEAD
+
                 <th>Payment Status</th>
-=======
+
 
                 <th>Status</th>
                 <th>Actions</th>
 
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
+
             </tr>
         </thead>
         <tbody>
@@ -84,13 +84,13 @@
                 <td><%= resultSet.getString("phone") %></td>
                 <td><%= resultSet.getDate("date") %></td>
                 <td><%= resultSet.getTime("time") %></td>
-<<<<<<< HEAD
+
                 <td>
                 	<div class="btn btn-outline-success user-select-none">
                 		<span>Paid</span>
                 	</div>
                 </td>
-=======
+
 
                 <td>
                     <%= status %>  <!-- Display the current status (or 'Pending' if null) -->
@@ -100,7 +100,6 @@
                     <a href="cancelBooking.jsp?id=<%= bookingId %>" class="btn btn-danger btn-sm">Cancel</a>
                 </td>
 
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
             </tr>
     <%
                 } while (resultSet.next());

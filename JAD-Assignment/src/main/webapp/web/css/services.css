@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /* General Styles */
 body {
     font-family: 'Roboto', sans-serif;
@@ -8,10 +6,7 @@ body {
     margin: 0;
     padding: 0;
 }
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 
-<<<<<<< HEAD
-=======
 h1, h2 {
     font-weight: 600;
     color: #343a40;
@@ -88,45 +83,17 @@ nav .navbar-nav .nav-link:hover {
 }
 
 /* Service Cards Container */
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 .content-container {
-<<<<<<< HEAD
-    text-align: center;
-    padding: 50px 20px; /* Add generous padding for spacing */
-    background-color: #f9f9f9; /* Light background for separation */
-    border-bottom: 3px solid #a8d5ba; /* Subtle divider */
-    margin-bottom: 40px; /* Create space between header and service cards */
-}
-
-.content-container h1 {
-    font-size: 2.8em; /* Larger title */
-    color: #1b5e20; /* Dark green for contrast */
-    margin-bottom: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
-    letter-spacing: 1px; /* Slightly spaced letters for elegance */
-    text-transform: uppercase; /* Make it stand out */
-=======
     margin: 40px auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 }
 
-<<<<<<< HEAD
-.content-container p {
-    font-size: 1.4em; /* Larger, readable font */
-    color: #4c8c4a; /* Subtle green tone */
-    max-width: 700px; /* Limit width for better readability */
-    margin: 0 auto; /* Center text */
-    line-height: 1.6; /* Better line spacing */
-    font-family: 'Arial', sans-serif; /* Clean and legible font */
-=======
 h1 {
     margin-bottom: 20px;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 }
 
 .service-card-container {
@@ -136,41 +103,17 @@ h1 {
     justify-content: center;
 }
 
-<<<<<<< HEAD
-.service-card-container {
-    display: flex;
-    flex-direction: column; /* Arrange cards vertically */
-    align-items: center;    /* Center align cards */
-    gap: 30px;
-=======
 .service-card {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 280px;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
     padding: 20px;
-<<<<<<< HEAD
-=======
     text-align: left;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 }
 
-<<<<<<< HEAD
-/* Updated service card styles for full-width layout */
-.service-card {
-    background-color: #ffffff;
-    border: 2px solid #a8d5ba;
-    border-radius: 10px;
-    padding: 30px;
-    width: 90%; /* Adjust width to be almost full page */
-    max-width: 1200px; /* Prevent overly wide cards */
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-=======
 .service-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
@@ -180,59 +123,13 @@ h1 {
     font-size: 2rem;
     color: #007bff;
     margin-bottom: 15px;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 }
 
-<<<<<<< HEAD
-/* Service card hover effect */
-.service-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-=======
 .service-card h3 {
     font-size: 1.5rem;
     margin-bottom: 10px;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 }
 
-<<<<<<< HEAD
-/* Icon styling */
-.service-card i {
-    font-size: 4em;
-    margin-bottom: 15px;
-    color: white;
-    padding: 20px;
-    border-radius: 50%;
-    background-color: #2d6a4f;
-}
-
-
-
-/* Service title */
-.service-card h2 {
-    font-size: 2em; /* Larger title */
-    color: #1b5e20;
-    margin-bottom: 15px;
-}
-
-/* Service description */
-.service-card p {
-    font-size: 1.3em; /* Slightly larger description */
-    color: #4c8c4a;
-    margin-bottom: 20px;
-}
-
-/* Price styling */
-.service-card .price {
-    font-size: 1.8em;
-    color: #2d6a4f;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-/* Book Now button */
-.service-card .book-button {
-=======
 .service-card p {
     font-size: 1rem;
     margin-bottom: 15px;
@@ -242,25 +139,13 @@ h1 {
     background-color: #007bff;
     color: white;
     padding: 10px;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
     text-decoration: none;
-<<<<<<< HEAD
-    background-color: #2d6a4f;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 5px;
-    font-size: 1.2em;
-=======
     border-radius: 5px;
     display: inline-block;
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
     transition: background-color 0.3s ease;
 }
 
 .service-card .book-button:hover {
-<<<<<<< HEAD
-    background-color: #1b5e20;
-=======
     background-color: #0056b3;
 }
 
@@ -324,5 +209,4 @@ footer a:hover {
     .search-form button {
         width: 100%;
     }
->>>>>>> branch 'main' of https://github.com/spicychillisus/jad-assignment.git
 }

@@ -55,6 +55,7 @@ if (email != null && passwordInput != null) {
                 // Compare entered password with stored hash
                 if (passwordInput.equals(storedPasswordHash)) {
                     // If a matching member is found, create session
+                    session.setAttribute("userId", rs.getInt("id"));
                     session.setAttribute("userName", rs.getString("name"));           // Store user name
                     session.setAttribute("userEmail", rs.getString("email"));     // Store user email
                     session.setAttribute("userPhone", rs.getString("phone_number"));     // Store user phone
