@@ -8,6 +8,26 @@ public class Service {
 	private String category;
 	private Double rating;
 	private int demand;
+	
+	
+	public Service(int serviceid, String servicetitle, String servicedescription, double price, String category,
+			Double rating, int demand) {
+		//super();
+		this.serviceid = serviceid;
+		this.servicetitle = servicetitle;
+		this.servicedescription = servicedescription;
+		this.price = price;
+		this.category = category;
+		this.rating = rating;
+		this.demand = demand;
+	}
+	
+	
+	public Service() {
+		//super();
+	}
+
+
 	public int getServiceid() {
 		return serviceid;
 	}

@@ -63,7 +63,7 @@
 </head>
 <body>
 <%@ include file="components/navbar.html" %>
-  <%@ page import="java.sql.*, java.util.ArrayList, java.util.HashMap, java.util.Random, java.util.regex.*, members.*, pg.*" %>
+  <%@ page import="java.sql.*, java.util.ArrayList, java.util.HashMap, java.util.Random, java.util.regex.*, pg.*" %>
 
 <%
 String message = ""; // Message to display

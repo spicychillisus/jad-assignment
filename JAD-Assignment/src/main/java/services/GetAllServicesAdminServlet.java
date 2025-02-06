@@ -19,18 +19,17 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-
 /**
- * Servlet implementation class GetAllServicesServlet
+ * Servlet implementation class GetAllServicesAdminServlet
  */
-@WebServlet("/services")
-public class GetAllServicesServlet extends HttpServlet {
+@WebServlet("/services/admin")
+public class GetAllServicesAdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public GetAllServicesServlet() {
+    public GetAllServicesAdminServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -38,7 +37,7 @@ public class GetAllServicesServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		PrintWriter out = response.getWriter();
@@ -64,11 +63,11 @@ public class GetAllServicesServlet extends HttpServlet {
 			}
 			
 			request.setAttribute("services", services);
-			String url = "web/services.jsp";
+			String url = "web/admin/viewAllServices.jsp";
 			RequestDispatcher rd = request.getRequestDispatcher(url);
 			rd.forward(request, response);
 		} else {
-			String url = "web/admin/viewAllDiscounts.jsp";
+			String url = "web/admin/viewAllServices.jsp";
 			request.setAttribute("err", "NotFound");
 		}
 	}

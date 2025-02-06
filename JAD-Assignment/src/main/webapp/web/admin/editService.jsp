@@ -45,10 +45,13 @@
 
         if (resultSet.next()) {
         	service = new Service(
-        	        resultSet.getInt("id"),
+        	        resultSet.getInt("serviceid"),
         	        resultSet.getString("servicetitle"),
         	        resultSet.getString("servicedescription"),
-        	        resultSet.getDouble("price")
+        	        resultSet.getDouble("price"),
+        	        resultSet.getString("category"),
+        	        resultSet.getDouble("rating"),
+        	        resultSet.getInt("demand")
         	);
         } else {
             message = "<div class='alert alert-danger'>Service not found!</div>";
@@ -80,7 +83,7 @@
             updateStatement.setString(1, serviceTitle);
             updateStatement.setString(2, serviceDescription);
             updateStatement.setDouble(3, Double.parseDouble(servicePrice));
-            updateStatement.setInt(4, service.getId());
+            updateStatement.setInt(4, service.getServiceid());
 
             int rowsAffected = updateStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -102,7 +105,7 @@
     <%= message %>
 
     <form action="editService.jsp?serviceId=<%= serviceId %>" method="POST">
-        <input type="hidden" name="serviceId" value="<%= service.getId() %>">
+        <input type="hidden" name="serviceId" value="<%= service.getServiceid() %>">
         
         <div class="mb-3">
             <label for="serviceTitle" class="form-label">Service Title</label>

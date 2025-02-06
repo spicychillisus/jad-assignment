@@ -13,7 +13,7 @@ import java.io.IOException;
  * Servlet implementation class GetDiscountOwners
  */
 @WebServlet("/discountOwners")
-public class GetDiscountOwners extends HttpServlet {
+public class GetDiscountOwnersServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String url;
     private String username;
@@ -21,7 +21,7 @@ public class GetDiscountOwners extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public GetDiscountOwners() {
+    public GetDiscountOwnersServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
