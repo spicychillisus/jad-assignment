@@ -93,7 +93,7 @@
 	  <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a href="web/index.jsp" class="navbar-brand">
+        <a href="/JAD-Assignment/web/index.jsp" class="navbar-brand">
             <i class="fas fa-broom"></i> <!-- Font Awesome broom icon -->
             CleanEase
         </a>
@@ -106,7 +106,7 @@
                     <a href="/JAD-Assignment/services" class="nav-link">Services</a>
                 </li>
                 <li class="nav-item">
-                    <a href="web/bookings.jsp" class="nav-link">Bookings</a>
+                    <a href="/JAD-Assignment/web/bookings.jsp" class="nav-link">Bookings</a>
                 </li>
                 <li class="nav-item">
                     <% 
@@ -119,16 +119,16 @@
                                 Welcome, <%= userName %>
                             </span>
                             <!-- Edit Profile and Logout Buttons -->
-                            <a href="editProfile.jsp" class="btn btn-outline-light me-2">Edit Profile</a>
-                            <a href="logout.jsp" class="btn btn-warning text-dark">Logout</a>
+                            <a href="/JAD-Assignment/web/editProfile.jsp" class="btn btn-outline-light me-2">Edit Profile</a>
+                            <a href="/JAD-Assignment/web/logout.jsp" class="btn btn-warning text-dark">Logout</a>
                         </div>
                     <%
                         } else {
                     %>
                         <!-- Separated Login and Sign Up -->
                         <div class="login-container">
-                            <a href="login.jsp" class="btn btn-outline-light login">Login</a> 
-                            <a href="member-registration.jsp" class="btn btn-outline-light login">Sign Up</a>
+                            <a href="/JAD-Assignment/web/login.jsp" class="btn btn-outline-light login">Login</a> 
+                            <a href="/JAD-Assignment/web/member-registration.jsp" class="btn btn-outline-light login">Sign Up</a>
                         </div>
                     <%
                         }
