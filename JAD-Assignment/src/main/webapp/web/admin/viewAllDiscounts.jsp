@@ -15,6 +15,11 @@
 		<h1>Discounts</h1>
 		<p>All discount codes available.</p>
 	</div>
+	<div>
+		<a href="/JAD-Assignment/web/admin/createDiscount.jsp">
+			<button type="button" class="btn btn-primary">Create Discount</button>
+		</a>
+	</div>
 	<form>
 	</form>
 	<table class="table">
@@ -26,14 +31,13 @@
 	      <th scope="col">Description</th>
 		  <th scope="col">Start Usage</th>
 	      <th scope="col">End Usage</th>
-	      <th scope="col">View Users</th>
 	    </tr>
 	  </thead>
 	  <tbody>
 	  <%
 	  	
 	  if (session.getAttribute("adminRole") == null || !session.getAttribute("adminRole").equals("Admin")) {
-          response.sendRedirect("../login.jsp");
+          response.sendRedirect("/JAD-Assignment/web/login.jsp");
           return; // Stop further processing if not logged in as admin
       }
 	  
@@ -58,13 +62,6 @@
 	      <td><%= description %></td>
 	      <td><%= startUsage %></td>
 	      <td><%= endUsage %></td>
-	      <td>
-	      	<a href="web/admin/viewDiscountOwners.jsp?id=<%= discountId %>">
-	      		<button type="button" class="btn btn-info">
-	      			View Users
-	      		</button>
-	      	</a>
-	      </td>
 	   </tr>
 	  <%
 		  }

@@ -15,11 +15,16 @@ import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pg.Config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
@@ -49,74 +54,105 @@ public class VerifyDiscountInputServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check if user is logged in
-		System.out.println("test");
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("/JAD-Assignment/web/login.jsp"); // Redirect to login if user is not logged in
-            return;
-        }
+	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	        HttpSession session = request.getSession(false);
+	        if (session == null || session.getAttribute("userId") == null) {
+	            response.sendRedirect("/JAD-Assignment/web/login.jsp");
+	            return;
+	        }
 
-        // Get the discount code from the request
-        String discountCode = request.getParameter("discount");
-        PrintWriter out = response.getWriter();
-        
-        // Prepare to call the external REST service
-        Client client = ClientBuilder.newClient();
-        String restUrl = "http://localhost:8081/discounts/checkDiscountExists";
-        WebTarget target = client.target(restUrl);
-        
-        // Create JSON body for the POST request
-        String jsonBody = "{\"discountCode\": \"" + discountCode + "\"}";
-        System.out.println(jsonBody);
+	        int userId = (int) session.getAttribute("userId");
+	        String discountCode = request.getParameter("discount");
+	        PrintWriter out = response.getWriter();
 
-        // Make the POST request
-        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-        Response resp = invocationBuilder.post(Entity.entity(jsonBody, MediaType.APPLICATION_JSON));
-        
-        // Handle the response from the external service
-        int status = resp.getStatus();
-        if (status == 200) {
-            // If the discount code is valid
-        	String jsonResponse = resp.readEntity(String.class);
-            System.out.println("Response JSON: " + jsonResponse);
-            
-            ObjectMapper objectMapper = new ObjectMapper();
-            @SuppressWarnings("unchecked")
-			Map<String, Object> responseMap = objectMapper.readValue(jsonResponse, Map.class);
-            System.out.println("hehehehehe");
-            System.out.println(responseMap.get("discountValue"));
-            
-            
-            String discountCodeReturn = discountCode;
-            out.println("<h3>Valid Discount Code:</h3>");
-            out.println("<p>Discount Code: " + discountCodeReturn + "</p>");
-            String price = (String)session.getAttribute("price");
-            String service = (String)session.getAttribute("serviceName");
-            double svcPrice = Double.parseDouble(price);
-            double discountAmt = (double) responseMap.get("discountValue");
-            double newPrice = svcPrice - (svcPrice * discountAmt);
-            // Round to 2 decimal places using BigDecimal
-            BigDecimal roundedPrice = new BigDecimal(newPrice).setScale(2, RoundingMode.HALF_UP);
+	        // First check if user has already used this discount
+	        if (hasUserUsedDiscount(userId, discountCode)) {
+	            response.setContentType("text/html");
+	            out.println("<script type='text/javascript'>");
+	            out.println("alert('You have already used this discount code.');");
+	            out.println("window.location.href='/JAD-Assignment/serviceBooking';");
+	            out.println("</script>");
+	            return;
+	        }
 
-            // Get the value as double
-            double finalPrice = roundedPrice.doubleValue();
-            System.out.println(service);
-            System.out.println("berified!");
-            System.out.println(discountCodeReturn);
-            session.setAttribute("discountCode", discountCodeReturn);
-            System.out.println("statuscode:" + status);
-            response.sendRedirect("/JAD-Assignment/serviceBooking?service=" + service + "&price=" + finalPrice);
-        } else {
-            // If the discount code is invalid or some error occurred
-            out.println("<h3>Invalid Discount Code or Error Occurred</h3>");
-            out.println("<p>Please check the discount code and try again.</p>");
-        }
-
-        // Close the response to release resources
-        resp.close();
-        client.close(); // Close the client to free up resources
-    }
+	        // If not used, proceed with discount validation
+	        Client client = ClientBuilder.newClient();
+	        String restUrl = "http://localhost:8081/discounts/checkDiscountExists";
+	        WebTarget target = client.target(restUrl);
+	        
+	        String jsonBody = "{\"discountCode\": \"" + discountCode + "\"}";
+	        String service = (String)session.getAttribute("serviceName");
+	        String price = (String)session.getAttribute("price");
+	        double svcPrice = Double.parseDouble(price);
+	        String defaultRedirect = "/JAD-Assignment/serviceBooking?service=" + service + "&price=" + price;
+	        try {
+	            Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+	            Response resp = invocationBuilder.post(Entity.entity(jsonBody, MediaType.APPLICATION_JSON));
+	            
+	            if (resp.getStatus() == 200) {
+	                String jsonResponse = resp.readEntity(String.class);
+	                ObjectMapper objectMapper = new ObjectMapper();
+	                @SuppressWarnings("unchecked")
+					Map<String, Object> responseMap = objectMapper.readValue(jsonResponse, Map.class);
+	                double discountAmt = (double) responseMap.get("discountValue");
+	                double newPrice = svcPrice - (svcPrice * discountAmt);
+	                
+	                BigDecimal roundedPrice = new BigDecimal(newPrice).setScale(2, RoundingMode.HALF_UP);
+	                double finalPrice = roundedPrice.doubleValue();
+	                
+	                session.setAttribute("discountCode", discountCode);
+	                session.setAttribute("discountid", (int) responseMap.get("discountId"));
+	                
+	                response.sendRedirect("/JAD-Assignment/serviceBooking?service=" + service + "&price=" + finalPrice);
+	            } else {
+	                response.setContentType("text/html");
+	                out.println("<script type='text/javascript'>");
+	                out.println("alert('Invalid discount code.');");
+	                out.println(String.format("window.location.href='%s';", defaultRedirect));
+	                out.println("</script>");
+	            }
+	            
+	            resp.close();
+	        } finally {
+	            client.close();
+	        }
+	    }
+	 
+	 private boolean hasUserUsedDiscount(int userId, String discountCode) {
+	        Config neon = new Config();
+	        String url = neon.getConnectionUrl();
+	        String username = neon.getUser();
+	        String password = neon.getPassword();
+	        
+	        try {
+	            Class.forName("org.postgresql.Driver");
+	            try (Connection conn = DriverManager.getConnection(url, username, password)) {
+	                // First get the discount ID
+	                String discountQuery = "SELECT id FROM discounts WHERE code = ?";
+	                try (PreparedStatement ps = conn.prepareStatement(discountQuery)) {
+	                    ps.setString(1, discountCode);
+	                    ResultSet rs = ps.executeQuery();
+	                    if (rs.next()) {
+	                        int discountId = rs.getInt("id");
+	                        
+	                        // Then check if user has used this discount
+	                        String usageQuery = "SELECT COUNT(*) FROM discount_usage WHERE userid = ? AND discountid = ?";
+	                        try (PreparedStatement usagePs = conn.prepareStatement(usageQuery)) {
+	                            usagePs.setInt(1, userId);
+	                            usagePs.setInt(2, discountId);
+	                            ResultSet usageRs = usagePs.executeQuery();
+	                            if (usageRs.next()) {
+	                                return usageRs.getInt(1) > 0;
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	        return false;
+	    }
 
 }

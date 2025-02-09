@@ -34,6 +34,10 @@ public class GetAllServicesServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Initialize REST client
+    	HttpSession session = request.getSession(false);
+    	if (session != null) {
+    		session.removeAttribute("discountCode");
+    	}
         Client client = ClientBuilder.newClient();
         String searchQuery = request.getParameter("search");
 

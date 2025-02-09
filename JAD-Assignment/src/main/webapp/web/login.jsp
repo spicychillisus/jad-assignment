@@ -36,10 +36,16 @@ if (email != null && passwordInput != null) {
         // Check if the email matches the admin credentials
         if (email.equals("admin@email.com") && passwordInput.equals("admin")) {
             // Admin login is valid
-			session.setAttribute("adminRole", "Admin");
+            session.setAttribute("adminRole", "Admin");
             session.setAttribute("userEmail", email);
             session.setAttribute("userName", "Admin");
             response.sendRedirect(request.getContextPath() + "/web/admin/adminDashboard.jsp");
+        } else if (email.equals("cleaner@gmail.com") && passwordInput.equals("cleaner")) {
+            // Cleaner login is valid
+            session.setAttribute("userRole", "Cleaner");
+            session.setAttribute("userEmail", email);
+            session.setAttribute("userName", "Cleaner");
+            response.sendRedirect(request.getContextPath() + "/web/cleaner/cleanerBookings.jsp");
         } else {
             // SQL query to find a member with the given email
             String sql = "SELECT * FROM users WHERE email = ?";

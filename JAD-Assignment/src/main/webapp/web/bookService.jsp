@@ -42,7 +42,7 @@
     session.setAttribute("serviceName", service);
     
    	// get discount code after validation
-   	String discountCode = "";
+   	String discountCode = (String)session.getAttribute("discountCode");
     
     
 %>
@@ -119,9 +119,23 @@
                                value="<%= price %>" readonly> <!-- Display price excluding GST -->
                     </div>
                     
+                    <%
+                    System.out.println(discountCode);
+                    if (discountCode == null) {
+                    %>
                     <button type="button" class="btn btn-info mt-2 col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#discountModal">
-						View Available Discounts
+						Enter Discount
 					</button>
+                    <%
+                    } else {
+                    %>
+                    <button type="button" class="btn btn-info mt-2 col-md-6 mb-3 d-none" data-bs-toggle="modal" data-bs-target="#discountModal">
+						Enter Discount
+					</button>
+                    <%	
+                    }
+                    %>
+                    
 					
                 </div>
 
@@ -146,47 +160,15 @@
 						                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						            </div>
 						            <div class="modal-body">
-						            <!-- input discount code here -->
-						            <div class="row">
-						            	<div class="col-md-6 mb-3">
-										    <label for="discount" class="form-label">Enter Discount Code</label>
-										    <div class="col-md-6 mb-3">
-										    	<input type="text" id="discount" name="discount" class="form-control" placeholder="Enter your discount code">
-										    </div>
-										    <button type="submit" class="col-md-6 mb-3 btn btn-info">Submit</button>
-										</div>
-										
-						            </div>
-						            
-						                <ul class="list-group">
-						                    <% 
-						                    @SuppressWarnings("unchecked")
-					    					ArrayList<Discount> allDiscounts = (ArrayList<Discount>) request.getAttribute("validDiscounts");
-								    		discountCode = (String) session.getAttribute("discountCode");
-								            System.out.println(discountCode);
-								            Double discountValue = null;
-						                    if (allDiscounts != null && !allDiscounts.isEmpty()) {
-						                    	for (int i = 0; i < allDiscounts.size(); i++) { 
-						                    	     Discount discount = allDiscounts.get(i);
-						                    	     if (discount.getCode().equals(discountCode)) { 
-						                                 discountValue = discount.getDiscountValue(); 
-						                                 System.out.println(discountValue);
-						                             }
-						                    %>
-						                        <li class="list-group-item">
-						                            <strong><%= discount.getCode() %></strong> - <%= discount.getDescription() %> 
-						                            (Valid until: <%= discount.getEndDate() %>)
-						                            <span>value=<%= discountValue %></span>
-						                        </li>
-						                    <% 
-						                        }
-						                    } else { 
-						                    %>
-						                        <li class="list-group-item">No discounts available</li>
-						                    <% 
-						                    	} 
-						                    %>
-						                </ul>
+							            <!-- input discount code here -->
+							            <div class="row">
+							            	<div class="col-md-6 mb-3">
+											    <label for="discount" class="form-label">Enter Discount Code</label>
+											    <input type="text" id="discount" name="discount" class="form-control" placeholder="Enter your discount code">
+											    <button type="submit" class="col-md-6 mb-3 btn btn-info">Submit</button>
+											</div>
+											
+							            </div>
 						            </div>
 						            <div class="modal-footer">
 						                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -197,14 +179,16 @@
     </form>
     
     <%
-        Config neon = new Config();
-        String url = neon.getConnectionUrl();
-        String username = neon.getUser();
-        String password = neon.getPassword();
-        int rowsInserted = 0;
+    Config neon = new Config();
+    String url = neon.getConnectionUrl();
+    String username = neon.getUser();
+    String password = neon.getPassword();
 
-        // Processing form data when the form is submitted
-        if (request.getMethod().equalsIgnoreCase("POST")) {
+    // Processing form data when the form is submitted
+    if (request.getMethod().equalsIgnoreCase("POST")) {
+        Connection connection = null;
+        try {
+            // Get all form parameters
             String serviceType = request.getParameter("serviceType");
             String name = request.getParameter("name");
             String email = request.getParameter("email");
@@ -216,47 +200,120 @@
             String expiryDate = request.getParameter("expiryDate");
             String cvv = request.getParameter("cvv");
             String priceStrPost = request.getParameter("price");
-            // Parse price and calculate GST again for the database
+            
+            // Parse price and calculate GST
             double pricePost = Double.parseDouble(priceStrPost);
             double gstAmountPost = pricePost * 0.08;
             double totalPricePost = pricePost + gstAmountPost;
+            
+            // Get discount information from session
+            Integer discountIdObj = (Integer) session.getAttribute("discountid");
+            int discountId = (discountIdObj != null) ? discountIdObj : 0;
+            
+            // Convert date and time
+            java.sql.Date date = java.sql.Date.valueOf(dateStr);
+            java.sql.Time time = java.sql.Time.valueOf(timeStr + ":00");
 
-            try {
-                java.sql.Date date = java.sql.Date.valueOf(dateStr);
-                java.sql.Time time = java.sql.Time.valueOf(timeStr + ":00");
-
-                // Establish connection and execute insert
-                Class.forName("org.postgresql.Driver");
-                Connection connection = DriverManager.getConnection(url, username, password);
-                String sql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, location, card_number, expiry_date, cvv, price) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
-                PreparedStatement statement = connection.prepareStatement(sql);
-                statement.setString(1, serviceType);
-                statement.setString(2, name);
-                statement.setString(3, email);
-                statement.setString(4, phone);
-                statement.setDate(5, date);
-                statement.setTime(6, time);
-                statement.setString(7, location);
-                statement.setString(8, cardNumber);
-                statement.setString(9, expiryDate);
-                statement.setString(10, cvv);
-                statement.setDouble(11, totalPricePost); // Insert total price including GST
-
-                rowsInserted = statement.executeUpdate();
-                statement.close();
-                connection.close();
-            } catch (Exception e) {
-                out.println("<div class='alert alert-danger mt-4'>Error: " + e.getMessage() + "</div>");
+            // Begin transaction
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(url, username, password);
+            connection.setAutoCommit(false);
+            
+            // First check if discount has been used (if applicable)
+            if (discountId > 0) {
+                String checkSQL = "SELECT COUNT(*) FROM discount_usage WHERE userid = ? AND discountid = ?";
+                PreparedStatement ps = connection.prepareStatement(checkSQL);
+                ps.setInt(1, userid);
+                ps.setInt(2, discountId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    throw new Exception("This discount has already been used.");
+                }
+                rs.close();
+                ps.close();
             }
+            
+            // Insert booking
+            String bookingSql = "INSERT INTO bookings (service_type, customer_name, email, phone, date, time, " +
+                              "location, card_number, expiry_date, cvv, price) " +
+                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+            
+            PreparedStatement statement = connection.prepareStatement(bookingSql);
+            statement.setString(1, serviceType);
+            statement.setString(2, name);
+            statement.setString(3, email);
+            statement.setString(4, phone);
+            statement.setDate(5, date);
+            statement.setTime(6, time);
+            statement.setString(7, location);
+            statement.setString(8, cardNumber);
+            statement.setString(9, expiryDate);
+            statement.setString(10, cvv);
+            statement.setDouble(11, totalPricePost);
 
-            // If insertion is successful, redirect to bookings.jsp
-            if (rowsInserted > 0) {
-                response.sendRedirect("/JAD-Assignment/web/bookings.jsp"); // Redirect to bookings page
-                return; // Stop further processing
+            ResultSet rs = statement.executeQuery();
+            
+            if (rs.next()) {
+                int bookingId = rs.getInt(1);
+                
+                // If there's a discount, record its usage
+                if (discountId > 0) {
+                    String discountSql = "INSERT INTO discount_usage (discountId, times_used, userId, bookingId) " +
+                                       "VALUES (?, ?, ?, ?)";
+                    PreparedStatement discountStmt = connection.prepareStatement(discountSql);
+                    discountStmt.setInt(1, discountId);
+                    discountStmt.setInt(2, 1);
+                    discountStmt.setInt(3, userid);
+                    discountStmt.setInt(4, bookingId);
+                    discountStmt.executeUpdate();
+                    discountStmt.close();
+                }
+                
+                // Commit the transaction
+                connection.commit();
+                
+                // Clear the discount from session
+                session.removeAttribute("discountid");
+                
+                // Clean up resources
+                rs.close();
+                statement.close();
+                
+                // Redirect to receipt page
+                response.sendRedirect("receipt.jsp?serviceType=" + serviceType + 
+                                              "&name=" + name + 
+                                              "&email=" + email + 
+                                              "&price=" + pricePost + 
+                                              "&totalPrice=" + totalPricePost + 
+                                              "&date=" + dateStr + 
+                                              "&time=" + timeStr + 
+                                              "&location=" + location
+                                              );
+                return;
+            }
+            
+        } catch (Exception e) {
+            // Rollback transaction if there's an error
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException se) {
+                    se.printStackTrace();
+                }
+            }
+            out.println("<div class='alert alert-danger mt-4'>Error: " + e.getMessage() + "</div>");
+        } finally {
+            // Close connection in finally block
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException se) {
+                    se.printStackTrace();
+                }
             }
         }
-    %>
+    }
+%>
 
 </div>
 

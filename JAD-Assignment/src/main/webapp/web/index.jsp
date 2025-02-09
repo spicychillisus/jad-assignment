@@ -9,7 +9,11 @@
 </head>
 <body>
     <%@ include file="components/navbar.html" %>
-
+	<%
+	if (session != null) {
+		session.removeAttribute("discountCode");
+	}
+	%>
     <!-- Header Section -->
     <header>
         <h1>Welcome to CleanEase</h1>

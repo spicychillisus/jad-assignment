@@ -24,12 +24,12 @@
         return;
     }
 
-    Service service = null;
     String message = "";
+    Service service = null; // Declare service outside try block
 
     // Fetch service data from the database
     try {
-    	Config neon = new Config();
+        Config neon = new Config();
         String url = neon.getConnectionUrl();
         String username = neon.getUser();
         String password = neon.getPassword();
@@ -37,22 +37,22 @@
         Class.forName("org.postgresql.Driver");
         Connection connection = DriverManager.getConnection(url, username, password);
 
-        String sql = "SELECT * FROM services WHERE id = ?";
+        String sql = "SELECT * FROM services WHERE serviceid = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, Integer.parseInt(serviceId));
 
         ResultSet resultSet = statement.executeQuery();
 
         if (resultSet.next()) {
-        	service = new Service(
-        	        resultSet.getInt("serviceid"),
-        	        resultSet.getString("servicetitle"),
-        	        resultSet.getString("servicedescription"),
-        	        resultSet.getDouble("price"),
-        	        resultSet.getString("category"),
-        	        resultSet.getDouble("rating"),
-        	        resultSet.getInt("demand")
-        	);
+            service = new Service(
+                resultSet.getInt("serviceid"), // Ensure this matches your DB column name
+                resultSet.getString("servicetitle"),
+                resultSet.getString("servicedescription"),
+                resultSet.getDouble("price"),
+                resultSet.getString("category"),
+                resultSet.getDouble("rating"),
+                resultSet.getInt("demand")
+            );
         } else {
             message = "<div class='alert alert-danger'>Service not found!</div>";
         }
@@ -78,7 +78,7 @@
             Class.forName("org.postgresql.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
 
-            String updateSql = "UPDATE services SET servicetitle = ?, servicedescription = ?, price = ? WHERE id = ?";
+            String updateSql = "UPDATE services SET servicetitle = ?, servicedescription = ?, price = ? WHERE serviceid = ?";
             PreparedStatement updateStatement = connection.prepareStatement(updateSql);
             updateStatement.setString(1, serviceTitle);
             updateStatement.setString(2, serviceDescription);
@@ -88,6 +88,10 @@
             int rowsAffected = updateStatement.executeUpdate();
             if (rowsAffected > 0) {
                 message = "<div class='alert alert-success'>Service updated successfully.</div>";
+                // Re-fetch the updated service data
+                service.setServicetitle(serviceTitle);
+                service.setServicedescription(serviceDescription);
+                service.setPrice(Double.parseDouble(servicePrice));
             } else {
                 message = "<div class='alert alert-danger'>Failed to update service.</div>";
             }
@@ -104,23 +108,27 @@
     <h1>Edit Service</h1>
     <%= message %>
 
-    <form action="editService.jsp?serviceId=<%= serviceId %>" method="POST">
-        <input type="hidden" name="serviceId" value="<%= service.getServiceid() %>">
-        
-        <div class="mb-3">
-            <label for="serviceTitle" class="form-label">Service Title</label>
-            <input type="text" class="form-control" id="serviceTitle" name="serviceTitle" value="<%= service.getServicetitle() %>" required>
-        </div>
-        <div class="mb-3">
-            <label for="serviceDescription" class="form-label">Service Description</label>
-            <textarea class="form-control" id="serviceDescription" name="serviceDescription" required><%= service.getServicedescription() %></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="servicePrice" class="form-label">Price</label>
-            <input type="number" class="form-control" id="servicePrice" name="servicePrice" value="<%= service.getPrice() %>" required>
-        </div>
-        <button type="submit" class="btn btn-success">Save Changes</button>
-    </form>
+    <% if (service != null) { %>
+        <form action="editService.jsp?serviceId=<%= serviceId %>" method="POST">
+            <input type="hidden" name="serviceId" value="<%= service.getServiceid() %>">
+            
+            <div class="mb-3">
+                <label for="serviceTitle" class="form-label">Service Title</label>
+                <input type="text" class="form-control" id="serviceTitle" name="serviceTitle" value="<%= service.getServicetitle() %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="serviceDescription" class="form-label">Service Description</label>
+                <textarea class="form-control" id="serviceDescription" name="serviceDescription" required><%= service.getServicedescription() %></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="servicePrice" class="form-label">Price</label>
+                <input type="number" class="form-control" id="servicePrice" name="servicePrice" value="<%= service.getPrice() %>" required>
+            </div>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </form>
+    <% } else { %>
+        <div class="alert alert-danger">Service not found.</div>
+    <% } %>
 </div>
 
 <%@ include file="../components/footer.html" %>
