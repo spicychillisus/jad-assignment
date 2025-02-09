@@ -63,7 +63,7 @@
         <section id="cta">
             <h2>Ready to Book Your Cleaning Service?</h2>
             <p>Experience the CleanEase difference today!</p>
-            <a href="services.jsp">Explore Services</a>
+            <a href="/JAD-Assignment/services">Explore Services</a>
         </section>
         
         

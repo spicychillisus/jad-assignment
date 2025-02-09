@@ -145,6 +145,8 @@
                     double price = service.getPrice();
                     double rating = service.getRating();
                     String serviceId = serviceTitle.toLowerCase().replace(" ", "");
+                    
+                    //int userId = (int)session.getAttribute("userId");
 
         %>
             <div class="service-card">
@@ -154,7 +156,7 @@
                 <p><%= serviceDescription %></p>
                 <p><strong>Price: $<%= price %></strong></p>
                 <p><strong>Rating: </strong><span class="rating"><%= rating %> / 5</span></p>
-                <a href="web/bookService.jsp?service=<%= serviceId %>&price=<%= price %>" class="book-button">Book Now</a>
+                <a href="/JAD-Assignment/serviceBooking?service=<%= serviceId %>&price=<%= price %>" class="book-button">Book Now</a>
             </div>
         <%
                 }

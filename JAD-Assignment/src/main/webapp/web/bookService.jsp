@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*, pg.*" %>
+<%@ page import="java.util.*, discount.*, pg.*, java.sql.*" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Book Cleaning Service</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="./css/bookService.css">
+    <link rel="stylesheet" href="/JAD-Assignment/web/css/bookService.css">
 </head>
 <body>
 
@@ -16,11 +16,11 @@
     // Check if the user is logged in
     if (session.getAttribute("userName") == null) {
         // Redirect to login page if not logged in
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("/JAD-Assignment/web/login.jsp");
         return; 
     }
 
-	int userid = (int)session.getAttribute("userId");
+    int userid = (int)session.getAttribute("userId");
 
     // Get the price from the request or set a default if not provided
     String priceStr = request.getParameter("price");
@@ -36,6 +36,15 @@
     // Round both prices to 2 decimal places
     price = Math.round(price * 100.0) / 100.0;
     totalPrice = Math.round(totalPrice * 100.0) / 100.0;
+    
+    String service = request.getParameter("service");
+    session.setAttribute("price", priceStr);
+    session.setAttribute("serviceName", service);
+    
+   	// get discount code after validation
+   	String discountCode = "";
+    
+    
 %>
 
 <div class="container mt-5">
@@ -43,7 +52,7 @@
     <p>Fill out the form below to book a service and provide your payment details</p>
 
     <!-- Booking Form -->
-    <form action="bookService.jsp" method="post" class="mt-3">
+    <form action="/JAD-Assignment/web/bookService.jsp" method="post" class="mt-3">
         <div class="mb-3">
             <label for="serviceType" class="form-label">Service Type</label>
             <input type="text" id="serviceType" name="serviceType" class="form-control" 
@@ -82,7 +91,7 @@
             <label for="location" class="form-label">Location</label>
             <input type="text" id="location" name="location" class="form-control" placeholder="Enter your address or location" required>
         </div>
-
+		
         <!-- Payment Section -->
         <div class="payment-section">
             <h2>Payment Details</h2>
@@ -103,73 +112,90 @@
                     </div>
                 </div>
                 
-                <%
-                // reserved for discount handling
-                %>
-                
                 <div class="row">
-                	<div class="col-md-6 mb-3">
-                		<label for="price" class="form-label">Price (Excluding GST)</label>
-                    	<input type="text" id="price" name="price" class="form-control"
-                           value="<%= price %>" readonly> <!-- Display price excluding GST -->
-                	</div>
-                	<div class="col-md-6 mb-3">
-                		<label for="price" class="form-label">Discounts Available</label>
-	                    	<select id="price" name="price" class="form-control">
-							 	<option value="<%= price %>" selected><%= price %></option>
-							        <!-- Add more options if necessary -->
-							        <option value="100"><%= userid %></option>
-							        <option value="200">200</option>
-							        <option value="300">300</option>
-							    </select> <!-- Display price excluding GST -->       
-                	</div>
+                    <div class="col-md-6 mb-3">
+                        <label for="price" class="form-label">Price (Excluding GST)</label>
+                        <input type="text" id="price" name="price" class="form-control"
+                               value="<%= price %>" readonly> <!-- Display price excluding GST -->
+                    </div>
+                    
+                    <button type="button" class="btn btn-info mt-2 col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#discountModal">
+						View Available Discounts
+					</button>
+					
                 </div>
 
                 <div class="form-row">
-                    <label for="totalPrice" class="form-label">Price (Including GST)</label>
-                    <input type="text" id="totalPrice" name="totalPrice" class="form-control"
-                           value="<%= totalPrice %>" readonly> <!-- Display total price including GST -->
-                </div>
+			    <label for="totalPrice" class="form-label">Price (Including GST)</label>
+			    <input type="text" id="totalPrice" name="totalPrice" class="form-control"
+			           value="<%= totalPrice %>" readonly> <!-- Display total price including GST -->
+			    
+			     <!-- Adjusted margin for spacing -->
+			</div>
+
             </div>
             <button type="submit" class="payment-button">Submit Booking</button>
         </div>
     </form>
-
-    <script>
-        // Credit Card Number Validation
-        const cardNumberInput = document.getElementById('cardNumber');
-        cardNumberInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\D/g, ''); // Allow only numbers
-            if (this.value.length > 16) {
-                this.value = this.value.slice(0, 16); // Limit to 16 digits
-            }
-        });
-
-        // Expiry Date Validation
-        const expiryDateInput = document.getElementById('expiryDate');
-        expiryDateInput.addEventListener('input', function () {
-            let value = this.value.replace(/\D/g, ''); // Remove non-digit characters
-            if (value.length > 4) {
-                value = value.slice(0, 4); // Limit to 4 digits
-            }
-
-            if (value.length > 2 && !value.includes('/')) {
-                value = value.slice(0, 2) + '/' + value.slice(2);
-            }
-
-            this.value = value;
-        });
-
-        // CVV Validation
-        const cvvInput = document.getElementById('cvv');
-        cvvInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\D/g, ''); // Allow only numbers
-            if (this.value.length > 3) {
-                this.value = this.value.slice(0, 3); // Limit to 3 digits
-            }
-        });
-    </script>
-
+    <form action="/JAD-Assignment/verifyDiscount" method="POST">
+    	<div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+						        <div class="modal-content">
+						            <div class="modal-header">
+						                <h5 class="modal-title" id="discountModalLabel">Available Discounts</h5>
+						                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						            </div>
+						            <div class="modal-body">
+						            <!-- input discount code here -->
+						            <div class="row">
+						            	<div class="col-md-6 mb-3">
+										    <label for="discount" class="form-label">Enter Discount Code</label>
+										    <div class="col-md-6 mb-3">
+										    	<input type="text" id="discount" name="discount" class="form-control" placeholder="Enter your discount code">
+										    </div>
+										    <button type="submit" class="col-md-6 mb-3 btn btn-info">Submit</button>
+										</div>
+										
+						            </div>
+						            
+						                <ul class="list-group">
+						                    <% 
+						                    @SuppressWarnings("unchecked")
+					    					ArrayList<Discount> allDiscounts = (ArrayList<Discount>) request.getAttribute("validDiscounts");
+								    		discountCode = (String) session.getAttribute("discountCode");
+								            System.out.println(discountCode);
+								            Double discountValue = null;
+						                    if (allDiscounts != null && !allDiscounts.isEmpty()) {
+						                    	for (int i = 0; i < allDiscounts.size(); i++) { 
+						                    	     Discount discount = allDiscounts.get(i);
+						                    	     if (discount.getCode().equals(discountCode)) { 
+						                                 discountValue = discount.getDiscountValue(); 
+						                                 System.out.println(discountValue);
+						                             }
+						                    %>
+						                        <li class="list-group-item">
+						                            <strong><%= discount.getCode() %></strong> - <%= discount.getDescription() %> 
+						                            (Valid until: <%= discount.getEndDate() %>)
+						                            <span>value=<%= discountValue %></span>
+						                        </li>
+						                    <% 
+						                        }
+						                    } else { 
+						                    %>
+						                        <li class="list-group-item">No discounts available</li>
+						                    <% 
+						                    	} 
+						                    %>
+						                </ul>
+						            </div>
+						            <div class="modal-footer">
+						                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						            </div>
+						        </div>
+						    </div>
+						</div>			    
+    </form>
+    
     <%
         Config neon = new Config();
         String url = neon.getConnectionUrl();
@@ -190,7 +216,6 @@
             String expiryDate = request.getParameter("expiryDate");
             String cvv = request.getParameter("cvv");
             String priceStrPost = request.getParameter("price");
-
             // Parse price and calculate GST again for the database
             double pricePost = Double.parseDouble(priceStrPost);
             double gstAmountPost = pricePost * 0.08;
@@ -227,11 +252,12 @@
 
             // If insertion is successful, redirect to bookings.jsp
             if (rowsInserted > 0) {
-                response.sendRedirect("bookings.jsp"); // Redirect to bookings page
+                response.sendRedirect("/JAD-Assignment/web/bookings.jsp"); // Redirect to bookings page
                 return; // Stop further processing
             }
         }
     %>
+
 </div>
 
 <%@ include file="components/footer.html" %>

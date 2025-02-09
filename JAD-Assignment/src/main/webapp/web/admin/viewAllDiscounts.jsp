@@ -58,7 +58,13 @@
 	      <td><%= description %></td>
 	      <td><%= startUsage %></td>
 	      <td><%= endUsage %></td>
-	      <td><a href="web/admin/viewDiscountOwners.jsp?id=<%= discountId %>"><button type="button" class="btn btn-info">View Users</button></a></td>
+	      <td>
+	      	<a href="web/admin/viewDiscountOwners.jsp?id=<%= discountId %>">
+	      		<button type="button" class="btn btn-info">
+	      			View Users
+	      		</button>
+	      	</a>
+	      </td>
 	   </tr>
 	  <%
 		  }
