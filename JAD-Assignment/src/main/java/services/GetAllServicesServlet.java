@@ -37,6 +37,7 @@ public class GetAllServicesServlet extends HttpServlet {
     	HttpSession session = request.getSession(false);
     	if (session != null) {
     		session.removeAttribute("discountCode");
+    		session.removeAttribute("discountValue");
     	}
         Client client = ClientBuilder.newClient();
         String searchQuery = request.getParameter("search");

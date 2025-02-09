@@ -117,6 +117,8 @@
 
         <!-- Services Display -->
         <%
+        session.removeAttribute("discountCode");
+    	session.removeAttribute("discountValue");
         	@SuppressWarnings("unchecked")
             ArrayList<Service> services = (ArrayList<Service>) request.getAttribute("services");
             String previousCategory = "";

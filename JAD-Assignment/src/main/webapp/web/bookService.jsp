@@ -112,15 +112,45 @@
                     </div>
                 </div>
                 
+                
+                
+                
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="price" class="form-label">Price (Excluding GST)</label>
+                    <%
+					    String priceLabel = "Price (Excluding GST)";
+					    String priceLabelDisc = "Price (Excluding GST & After %s discount)";
+					    
+					    // Retrieve discount value from session, use default value if null
+					    Double discountValue = (Double) session.getAttribute("discountValue");
+					    if (discountValue == null) {
+					        discountValue = 0.0; // Set default value if session attribute is null
+					    }
+					
+					    String discountPercentage = ""; // Declare it here to avoid scope issues
+					
+					    if (discountValue != 0.0) {
+					        // Convert the discount value to percentage and remove decimals
+					        int percentageValue = (int) (discountValue * 100); // Cast to int to remove decimals
+					        discountPercentage = String.format("%d%%", percentageValue); // Format as integer
+					%>
+					    <label for="price" class="form-label"><%= String.format(priceLabelDisc, discountPercentage) %></label>
+					<%
+					    } else {
+					%>
+					    <label for="price" class="form-label"><%= priceLabel %></label>
+					<%
+					    }
+					%>
+
+
+
+                        
                         <input type="text" id="price" name="price" class="form-control"
                                value="<%= price %>" readonly> <!-- Display price excluding GST -->
                     </div>
                     
                     <%
-                    System.out.println(discountCode);
                     if (discountCode == null) {
                     %>
                     <button type="button" class="btn btn-info mt-2 col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#discountModal">

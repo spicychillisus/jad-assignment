@@ -12,6 +12,7 @@
 	<%
 	if (session != null) {
 		session.removeAttribute("discountCode");
+		session.removeAttribute("discountValue");
 	}
 	%>
     <!-- Header Section -->

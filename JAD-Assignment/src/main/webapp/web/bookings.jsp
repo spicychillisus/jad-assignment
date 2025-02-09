@@ -17,7 +17,8 @@
     <p>Below are the details of your upcoming service bookings:</p>
 
     <%
-
+    session.removeAttribute("discountCode");
+	session.removeAttribute("discountValue");
         // Get the user email from the session or redirect to login page if not found
         String userEmail = (String) session.getAttribute("userEmail");
         if (userEmail == null || userEmail.isEmpty()) {

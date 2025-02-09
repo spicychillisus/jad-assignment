@@ -70,6 +70,7 @@ String message = ""; // Message to display
 String userEmail = (String) session.getAttribute("userEmail");
 if (session != null) {
 	session.removeAttribute("discountCode");
+	session.removeAttribute("discountValue");
 }
 
 if (userEmail == null) {

@@ -60,6 +60,10 @@ public class VerifyDiscountInputServlet extends HttpServlet {
 	            response.sendRedirect("/JAD-Assignment/web/login.jsp");
 	            return;
 	        }
+	        
+	        String service = (String)session.getAttribute("serviceName");
+	        String price = (String)session.getAttribute("price");
+	        String defaultRedirect = "/JAD-Assignment/serviceBooking?service=" + service + "&price=" + price;
 
 	        int userId = (int) session.getAttribute("userId");
 	        String discountCode = request.getParameter("discount");
@@ -70,7 +74,7 @@ public class VerifyDiscountInputServlet extends HttpServlet {
 	            response.setContentType("text/html");
 	            out.println("<script type='text/javascript'>");
 	            out.println("alert('You have already used this discount code.');");
-	            out.println("window.location.href='/JAD-Assignment/serviceBooking';");
+	            out.println(String.format("window.location.href='%s';", defaultRedirect));
 	            out.println("</script>");
 	            return;
 	        }
@@ -81,10 +85,9 @@ public class VerifyDiscountInputServlet extends HttpServlet {
 	        WebTarget target = client.target(restUrl);
 	        
 	        String jsonBody = "{\"discountCode\": \"" + discountCode + "\"}";
-	        String service = (String)session.getAttribute("serviceName");
-	        String price = (String)session.getAttribute("price");
+	        
 	        double svcPrice = Double.parseDouble(price);
-	        String defaultRedirect = "/JAD-Assignment/serviceBooking?service=" + service + "&price=" + price;
+	        
 	        try {
 	            Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 	            Response resp = invocationBuilder.post(Entity.entity(jsonBody, MediaType.APPLICATION_JSON));
@@ -101,6 +104,7 @@ public class VerifyDiscountInputServlet extends HttpServlet {
 	                double finalPrice = roundedPrice.doubleValue();
 	                
 	                session.setAttribute("discountCode", discountCode);
+	                session.setAttribute("discountValue", discountAmt);
 	                session.setAttribute("discountid", (int) responseMap.get("discountId"));
 	                
 	                response.sendRedirect("/JAD-Assignment/serviceBooking?service=" + service + "&price=" + finalPrice);

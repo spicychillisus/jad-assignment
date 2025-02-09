@@ -1,4 +1,4 @@
-package discount;
+package services;
 import pg.Config;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -26,18 +26,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import discount.Discount;
+
 
 /**
  * Servlet implementation class GetUserDiscountServlet
  */
 @WebServlet("/serviceBooking")
-public class GetUserDiscountServlet extends HttpServlet {
+public class BookServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Config neon = new Config();
 	private String url = neon.getConnectionUrl();
 	private String username = neon.getUser();
 	private String dbPassword = neon.getPassword();
-    public GetUserDiscountServlet() {
+    public BookServiceServlet() {
         super();
     }
     
